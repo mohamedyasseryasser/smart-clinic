@@ -1,0 +1,101 @@
+﻿@model IEnumerable<smart_clinic.viewmodels.category.ResponseCategoryVM>
+
+@{
+    ViewData["Title"] = "Categories";
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2>Categories</h2>
+        <a asp-action="createcategory" class="btn btn-primary">Add New Category</a>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-body">
+            <form asp-action="Index" method="get" class="row g-3">
+                <div class="col-md-4">
+                    <label class="form-label">Search Name/Description</label>
+                    <input type="text" name="searchterm" value="@ViewBag.SearchTerm" class="form-control" placeholder="Search...">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Filter by Admin</label>
+                    <select name="userId" class="form-control" asp-items="@(new SelectList(ViewBag.Admins, "Value", "Text", ViewBag.SelectedUserId))">
+                        <option value="">All Admins</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Filter by Status</label>
+                    <select name="isActive" class="form-control">
+                        <option value="">All Statuses</option>
+                        <option value="true" selected="@(ViewBag.SelectedIsActive == true ? "selected" : null)">Active Only</option>
+                        <option value="false" selected="@(ViewBag.SelectedIsActive == false ? "selected" : null)">Inactive Only</option>
+                    </select>
+                </div>
+                <div class="col-md-2 d-flex align-items-end">
+                    <button type="submit" class="btn btn-secondary w-100">Apply Filters</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success">@TempData["Success"]</div>
+    }
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger">@TempData["Error"]</div>
+    }
+
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Description</th>
+                <th>State</th>
+                <th>Addedby</th>
+
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model != null && Model.Any())
+            {
+                foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.cat_id</td>
+                        <td>@item.cat_name</td>
+                        <td>@item.cat_description</td>
+                        <td>
+                            @if (item.isactive)
+                            {
+                                <span class="badge bg-success">Active</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-danger">Inactive</span>
+                            }
+                        </td>
+                        <td>@item.AddedBy</td>
+                        <td>
+                            <a asp-action="Edit" asp-route-id="@item.cat_id" class="btn btn-sm btn-warning">Edit</a>
+                            <a asp-action="Details" asp-route-id="@item.cat_id" class="btn btn-sm btn-info">Details</a>
+                            <form asp-action="Delete" asp-route-id="@item.cat_id" method="post" style="display:inline;" onsubmit="return confirm('Are you sure?');">
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="4" class="text-center">No categories found.</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

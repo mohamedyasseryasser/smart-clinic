@@ -1,0 +1,83 @@
+﻿@model IEnumerable<smart_clinic.viewmodels.Appoinment.ResponseAppoimentVM>
+
+@{
+    ViewData["Title"] = "Search Results";
+}
+
+<div class="container mt-5">
+    <h2>Search Results</h2>
+
+    @if (Model == null || !Model.Any())
+    {
+        <div class="alert alert-info">No appointments found.</div>
+    }
+    else
+    {
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Appointment ID</th>
+                    <th>Phone Number</th>
+                    <th>Patient Name</th>
+                    <th>Appointment Date</th>
+                    <th>Start Time</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var appoinment in Model)
+                {
+                    <tr>
+                        <td>@appoinment.appoimentid</td>
+                        <td>@appoinment.PhoneNumber</td>
+                        <td>@appoinment.Patient?.patientname</td>
+                        <td>@appoinment.Appoinmentdate.ToString("yyyy-MM-dd")</td>
+                        <td>@appoinment.startat.ToString("HH:mm")</td>
+                        <td>
+                            @switch (appoinment.status)
+                            {
+                                case smart_clinic.enums.AppointmentStatus.Pending:
+                                    <span class="badge bg-warning">Pending</span>
+                                    break;
+                                case smart_clinic.enums.AppointmentStatus.Confirmed:
+                                    <span class="badge bg-info">Confirmed</span>
+                                    break;
+                                case smart_clinic.enums.AppointmentStatus.Completed:
+                                    <span class="badge bg-success">Completed</span>
+                                    break;
+                                case smart_clinic.enums.AppointmentStatus.Cancelled:
+                                    <span class="badge bg-danger">Cancelled</span>
+                                    break;
+                                case smart_clinic.enums.AppointmentStatus.NoShow:
+                                    <span class="badge bg-secondary">No Show</span>
+                                    break;
+                            }
+                        </td>
+                        <td>
+                            <a href="@Url.Action("Details", new { id = appoinment.appoimentid })" class="btn btn-sm btn-info">View</a>
+
+                            @if (appoinment.status == smart_clinic.enums.AppointmentStatus.Pending)
+                            {
+                                <a href="@Url.Action("ConfirmArrival", new { id = appoinment.appoimentid })" class="btn btn-sm btn-success">Confirm Arrival</a>
+                            }
+
+                            @if (appoinment.status == smart_clinic.enums.AppointmentStatus.Confirmed)
+                            {
+                                <a href="@Url.Action("StartVisit", new { id = appoinment.appoimentid })" class="btn btn-sm btn-primary">Start Visit</a>
+                            }
+
+                            @if (appoinment.status != smart_clinic.enums.AppointmentStatus.Completed
+                                                && appoinment.status != smart_clinic.enums.AppointmentStatus.Cancelled)
+                            {
+                                <a href="@Url.Action("Cancel", new { id = appoinment.appoimentid })" class="btn btn-sm btn-danger">Cancel</a>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+
+    <a href="@Url.Action("Search")" class="btn btn-secondary">Back to Search</a>
+</div>

@@ -1,0 +1,28 @@
+﻿@model smart_clinic.viewmodels.Appoinment.UpdateAppoinmentStateVM;
+
+@{
+    ViewData["Title"] = "Confirm Patient Arrival";
+}
+
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <h2>Confirm Patient Arrival</h2>
+
+            <div class="alert alert-info">
+                Are you sure you want to confirm the arrival of patient
+                <strong>@Model.patientname</strong> with phone number
+                <strong>@Model.phone</strong>?
+            </div>
+
+            <form method="post" asp-action="ConfirmArrival">
+                <input type="hidden" name="AppoinmentId" value="@Model.AppoinmentId" />
+                <input type="hidden" name="Status" value="@Model.Status" />
+                <input type="hidden" name="patientname" value="@Model.patientname" />
+                <input type="hidden" name="phone" value="@Model.phone" />
+                <button type="submit" class="btn btn-success">Yes, Confirm Arrival</button>
+                <a href="@Url.Action("Details", new { id = Model.AppoinmentId })" class="btn btn-secondary">Cancel</a>
+            </form>
+        </div>
+    </div>
+</div>

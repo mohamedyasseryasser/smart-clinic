@@ -1,0 +1,37 @@
+﻿@model smart_clinic.viewmodels.category.AddCategoryVM
+
+@{
+    ViewData["Title"] = "Add Category";
+}
+
+<div class="container mt-4">
+    <h2>Add New Category</h2>
+    <hr />
+    <div class="row">
+        <div class="col-md-6">
+            <form asp-action="create">
+                <div asp-validation-summary="All" class="text-danger"></div>
+                <div class="mb-3">
+                    <label asp-for="cat_name" class="form-label">Category Name</label>
+                    <input asp-for="cat_name" class="form-control" />
+                    <span asp-validation-for="cat_name" class="text-danger"></span>
+                </div>
+                <div class="mb-3">
+                    <label asp-for="cat_description" class="form-label">Description</label>
+                    <textarea asp-for="cat_description" class="form-control" rows="3"></textarea>
+                    <span asp-validation-for="cat_description" class="text-danger"></span>
+                </div>
+                <div class="mb-3">
+                    <button type="submit" class="btn btn-primary">Create</button>
+                    <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

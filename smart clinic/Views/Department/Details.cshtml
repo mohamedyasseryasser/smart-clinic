@@ -1,0 +1,70 @@
+﻿@model smart_clinic.viewmodels.departmentvm.ResponseDeptVm
+
+@{
+    ViewData["Title"] = "Department Details";
+}
+
+<h1>Department Details</h1>
+
+<div>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-3">ID</dt>
+        <dd class="col-sm-9">@Model.DepartmentId</dd>
+
+        <dt class="col-sm-3">Name</dt>
+        <dd class="col-sm-9">@Model.Name</dd>
+
+        <dt class="col-sm-3">Floor Number</dt>
+        <dd class="col-sm-9">@Model.FloorNumber</dd>
+
+        <dt class="col-sm-3">Phone</dt>
+        <dd class="col-sm-9">@Model.Phone</dd>
+
+        <dt class="col-sm-3">Status</dt>
+        <dd class="col-sm-9">
+            <span class="badge @(Model.isactive ? "bg-success" : "bg-danger")">
+                @(Model.isactive ? "Active" : "Inactive")
+            </span>
+        </dd>
+
+        <dt class="col-sm-3">Description</dt>
+        <dd class="col-sm-9">@Model.description</dd>
+
+        <dt class="col-sm-3">Created At</dt>
+        <dd class="col-sm-9">@Model.createdat.ToString("yyyy-MM-dd HH:mm")</dd>
+
+        <dt class="col-sm-3">Created By</dt>
+        <dd class="col-sm-9">@Model.UserName</dd>
+
+        <dt class="col-sm-3">Doctor Count</dt>
+        <dd class="col-sm-9">@Model.DoctorCount</dd>
+    </dl>
+</div>
+
+@if (Model.doctors != null && Model.doctors.Any())
+{
+    <h4>Doctors in this Department</h4>
+    <table class="table table-sm table-bordered">
+        <thead>
+            <tr>
+                <th>Doctor Name</th>
+                <th>Specialization</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var doctor in Model.doctors)
+            {
+                <tr>
+                    <td>@doctor.UserName</td>
+                    <td>@doctor.Specialization</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+<div>
+    <a asp-action="Edit" asp-route-id="@Model.DepartmentId" class="btn btn-warning">Edit</a>
+    <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+</div>

@@ -1,0 +1,168 @@
+﻿@model smart_clinic.viewmodels.Patient.ResponsePatientVM
+
+@{
+    ViewData["Title"] = "Patient Details";
+}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2>Patient Profile: @Model.patientname</h2>
+        <div>
+            <a asp-action="Edit" asp-route-id="@Model.patientid" class="btn btn-warning">Edit Profile</a>
+            <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Basic Info -->
+        <div class="col-md-4">
+            <div class="card mb-4 shadow-sm">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0">Basic Information</h5>
+                </div>
+                <div class="card-body">
+                    <p><strong>ID:</strong> @Model.patientid</p>
+                    <p><strong>Gender:</strong> @Model.Gender</p>
+                    <p><strong>Phone:</strong> @Model.phonenumber</p>
+                    <p><strong>National ID:</strong> @(Model.nationalid?.ToString() ?? "N/A")</p>
+                    <p><strong>Birth Date:</strong> @Model.datebirth.ToShortDateString()</p>
+                    <p>
+                        <strong>Status:</strong>
+                        <span class="badge @(Model.isvalid == true ? "bg-success" : "bg-danger")">
+                            @(Model.isvalid == true ? "Active" : "Inactive")
+                        </span>
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- History Tabs -->
+        <div class="col-md-8">
+            <div class="card shadow-sm">
+                <div class="card-header">
+                    <ul class="nav nav-tabs card-header-tabs" id="patientTab" role="tablist">
+                        <li class="nav-item">
+                            <button class="nav-link active" id="appointments-tab" data-bs-toggle="tab" data-bs-target="#appointments" type="button" role="tab">Appointments</button>
+                        </li>
+                        <li class="nav-item">
+                            <button class="nav-link" id="visits-tab" data-bs-toggle="tab" data-bs-target="#visits" type="button" role="tab">Visits</button>
+                        </li>
+                        <li class="nav-item">
+                            <button class="nav-link" id="prescriptions-tab" data-bs-toggle="tab" data-bs-target="#prescriptions" type="button" role="tab">Prescriptions</button>
+                        </li>
+                        <li class="nav-item">
+                            <button class="nav-link" id="invoices-tab" data-bs-toggle="tab" data-bs-target="#invoices" type="button" role="tab">Invoices</button>
+                        </li>
+                    </ul>
+                </div>
+                <div class="card-body">
+                    <div class="tab-content" id="patientTabContent">
+                        <!-- Appointments -->
+                        <div class="tab-pane fade show active" id="appointments" role="tabpanel">
+                            <table class="table table-sm">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Time</th>
+                                        <th>Doctor</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var app in Model.Appointments)
+                                    {
+                                        <tr>
+                                            <td>@app.Appoinmentdate.ToShortDateString()</td>
+                                            <td>@app.startat.ToString("HH:mm") - @app.endat.ToString("HH:mm")</td>
+                                            <td>@app.DoctorName</td>
+                                            <td><span class="badge bg-secondary">@app.status</span></td>
+                                        </tr>
+                                    }
+                                    @if (!Model.Appointments.Any())
+                                    {
+                                        <tr><td colspan="4" class="text-center">No appointments found.</td></tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Visits -->
+                        <div class="tab-pane fade" id="visits" role="tabpanel">
+                            <table class="table table-sm">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Diagnosis</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var visit in Model.Visits)
+                                    {
+                                        <tr>
+                                            <td>@visit.visitdate.ToShortDateString()</td>
+                                            <td>@visit.diagnosis</td>
+                                            <td>@visit.visitstatus</td>
+                                        </tr>
+                                    }
+                                    @if (!Model.Visits.Any())
+                                    {
+                                        <tr><td colspan="3" class="text-center">No visits found.</td></tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Prescriptions -->
+                        <div class="tab-pane fade" id="prescriptions" role="tabpanel">
+                            @foreach (var pres in Model.Prescriptions)
+                            {
+                                <div class="border-bottom mb-2 pb-2">
+                                    <h6>Date: @pres.prescriptiondate.ToShortDateString()</h6>
+                                    <p class="mb-1 text-muted">Notes: @pres.notes</p>
+                                    <div>
+                                        <strong>Medicines:</strong>
+                                        @foreach (var med in pres.Medicines)
+                                        {
+                                            <span class="badge bg-light text-dark border mr-1">@med</span>
+                                        }
+                                    </div>
+                                </div>
+                            }
+                            @if (!Model.Prescriptions.Any())
+                            {
+                                <p class="text-center">No prescriptions found.</p>
+                            }
+                        </div>
+
+                        <!-- Invoices -->
+                        <div class="tab-pane fade" id="invoices" role="tabpanel">
+                            <table class="table table-sm">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Amount</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var inv in Model.Invoices)
+                                    {
+                                        <tr>
+                                            <td>@inv.CreatedAt.ToShortDateString()</td>
+                                            <td>@inv.FinalAmount.ToString("C")</td>
+                                            <td>@inv.Status</td>
+                                        </tr>
+                                    }
+                                    @if (!Model.Invoices.Any())
+                                    {
+                                        <tr><td colspan="3" class="text-center">No invoices found.</td></tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

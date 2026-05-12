@@ -1,0 +1,25 @@
+﻿@model smart_clinic.viewmodels.Appoinment.ResponseAppoimentVM;
+
+@{
+    ViewData["Title"] = "Cancel Appointment";
+}
+
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <h2>Cancel Appointment</h2>
+
+            <div class="alert alert-warning">
+                Are you sure you want to cancel the appointment for
+                <strong>@Model.Patient?.patientname</strong>
+                on <strong>@Model.Appoinmentdate.ToString("yyyy-MM-dd")</strong>?
+            </div>
+
+            <form method="post" asp-action="Cancele">
+                <input type="hidden" name="id" value="@Model.appoimentid" />
+                <button type="submit" class="btn btn-danger">Yes, Cancel Appointment</button>
+                <a href="@Url.Action("Details", new { id = Model.appoimentid })" class="btn btn-secondary">Back</a>
+            </form>
+        </div>
+    </div>
+</div>

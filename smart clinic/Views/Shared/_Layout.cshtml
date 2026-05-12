@@ -1,0 +1,162 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Smart Clinic Dashboard</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/dashboard.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/smart_clinic.styles.css" asp-append-version="true" />
+
+    @await RenderSectionAsync("Styles", required: false)
+</head>
+<body>
+    <div class="wrapper">
+        <!-- Sidebar -->
+        <nav id="sidebar">
+            <div class="sidebar-header">
+                <h3><i class="fas fa-clinic-medical me-2"></i>Smart Clinic</h3>
+            </div>
+
+            <ul class="sidebar-menu">
+                <li class="@(ViewContext.RouteData.Values["Controller"]?.ToString() == "Home" && ViewContext.RouteData.Values["Action"]?.ToString() == "Index" ? "active" : "")">
+                    <a asp-controller="Home" asp-action="Index">
+                        <i class="fas fa-th-large"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+
+                @if (User.IsInRole("Admin"))
+                {
+                    <li class="@(ViewContext.RouteData.Values["Controller"]?.ToString() == "User" && ViewContext.RouteData.Values["Action"]?.ToString() == "ListDoctors" ? "active" : "")">
+                        <a asp-controller="User" asp-action="ListDoctors">
+                            <i class="fas fa-user-md"></i>
+                            <span>Doctors</span>
+                        </a>
+                    </li>
+                }
+
+                <li class="@(ViewContext.RouteData.Values["Controller"]?.ToString() == "Patient" ? "active" : "")">
+                    <a asp-controller="Patient" asp-action="Index">
+                        <i class="fas fa-user-injured"></i>
+                        <span>Patients</span>
+                    </a>
+                </li>
+
+                <li class="@(ViewContext.RouteData.Values["Controller"]?.ToString() == "Appoinment" ? "active" : "")">
+                    <a asp-controller="Appoinment" asp-action="Search">
+                        <i class="fas fa-calendar-check"></i>
+                        <span>Appointments</span>
+                    </a>
+                </li>
+
+                <li class="@(ViewContext.RouteData.Values["Controller"]?.ToString() == "Visit" ? "active" : "")">
+                    <a asp-controller="Visit" asp-action="getallvisit">
+                        <i class="fas fa-notes-medical"></i>
+                        <span>Visits</span>
+                    </a>
+                </li>
+
+
+                @if (User.IsInRole("Admin"))
+                {
+                    <li class="@(ViewContext.RouteData.Values["Controller"]?.ToString() == "Department" ? "active" : "")">
+                        <a asp-controller="Department" asp-action="Index">
+                            <i class="fas fa-hospital"></i>
+                            <span>Departments</span>
+                        </a>
+                    </li>
+
+                    <li class="@(ViewContext.RouteData.Values["Controller"]?.ToString() == "User" && (ViewContext.RouteData.Values["Action"]?.ToString() == "ListAdmins" || ViewContext.RouteData.Values["Action"]?.ToString() == "ListReceptionists") ? "active" : "")">
+                        <a asp-controller="User" asp-action="ListAdmins">
+                            <i class="fas fa-users-cog"></i>
+                            <span>Staff Management</span>
+                        </a>
+                    </li>
+                    <li class="@(ViewContext.RouteData.Values["Controller"]?.ToString() == "Category" && (ViewContext.RouteData.Values["Action"]?.ToString() == "Index" || ViewContext.RouteData.Values["Action"]?.ToString() == "Index") ? "active" : "")">
+                        <a asp-controller="Category" asp-action="Index">
+                            <i class="fas fa-users-cog"></i>
+                            <span>Category</span>
+                        </a>
+                    </li>
+                }
+
+                <li class="@(ViewContext.RouteData.Values["Action"]?.ToString() == "Reports" ? "active" : "")">
+                    <a href="#">
+                        <i class="fas fa-chart-bar"></i>
+                        <span>Reports</span>
+                    </a>
+                </li>
+
+                <li class="@(ViewContext.RouteData.Values["Controller"]?.ToString() == "Auth" && ViewContext.RouteData.Values["Action"]?.ToString() == "ChangePassword" ? "active" : "")">
+                    <a asp-controller="Auth" asp-action="ChangePassword">
+                        <i class="fas fa-cog"></i>
+                        <span>Settings</span>
+                    </a>
+                </li>
+
+                <li class="mt-4">
+                    <form asp-controller="Auth" asp-action="Logout" method="post" id="logoutForm">
+                        @Html.AntiForgeryToken()
+                        <a href="javascript:document.getElementById('logoutForm').submit()" class="text-danger">
+                            <i class="fas fa-sign-out-alt"></i>
+                            <span>Logout</span>
+                        </a>
+                    </form>
+                </li>
+            </ul>
+        </nav>
+
+        <!-- Page Content -->
+        <div id="content">
+            <header class="top-header">
+                <div class="d-flex align-items-center">
+                    <button type="button" id="sidebarCollapse" class="btn btn-link text-dark d-lg-none">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <h4 class="mb-0 ms-2 text-secondary fw-light">@ViewData["Title"]</h4>
+                </div>
+
+                <div class="user-profile d-flex align-items-center">
+                    <div class="text-end me-3 d-none d-sm-block">
+                        <div class="fw-bold text-dark">@User.Identity?.Name</div>
+                        <small class="text-muted">@(User.Claims.FirstOrDefault(c => c.Type == System.Security.Claims.ClaimTypes.Role)?.Value ?? "User")</small>
+                    </div>
+                    <div class="avatar bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                        <i class="fas fa-user"></i>
+                    </div>
+                </div>
+            </header>
+
+            <main class="page-content">
+                @RenderBody()
+            </main>
+        </div>
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+
+    <script>
+        $(document).ready(function () {
+            $('#sidebarCollapse').on('click', function () {
+                $('#sidebar').toggleClass('active');
+            });
+        });
+    </script>
+
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

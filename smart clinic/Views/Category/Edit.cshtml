@@ -1,0 +1,60 @@
+﻿@model smart_clinic.viewmodels.category.UpdateCategoryVM
+
+@{
+    ViewData["Title"] = "Edit Category";
+}
+
+<div class="container mt-4">
+    <h2>Edit Category</h2>
+    <hr />
+    <div class="row">
+        <div class="col-md-6">
+            <form asp-action="Edit">
+                <div asp-validation-summary="All" class="text-danger"></div>
+                <input type="hidden" asp-for="cat_id" />
+                @* <input type="hidden" asp-for="user_id" /> *@
+
+                <div class="mb-3">
+                    <label asp-for="cat_name" class="form-label">Category Name</label>
+                    <input asp-for="cat_name" class="form-control" />
+                    <span asp-validation-for="cat_name" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="cat_description" class="form-label">Description</label>
+                    <textarea asp-for="cat_description" class="form-control" rows="3"></textarea>
+                    <span asp-validation-for="cat_description" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3 form-check">
+                    <input asp-for="isactive" class="form-check-input" />
+                    <label asp-for="isactive" class="form-check-label">Is Active</label>
+                </div>
+                <div class="form-group mb-3">
+                    <label asp-for="user_id" class="form-label">Doctor</label>
+
+                    <select asp-for="user_id"
+                            asp-items="Model.admins"
+                            class="form-control">
+
+                        <option value="">Select an admin</option>
+
+                    </select>
+
+                    <span asp-validation-for="user_id" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                    <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

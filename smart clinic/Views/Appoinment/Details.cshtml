@@ -1,0 +1,99 @@
+﻿@model smart_clinic.viewmodels.Appoinment.ResponseAppoimentVM;
+
+@{
+    ViewData["Title"] = "Appointment Details";
+}
+
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <h2>Appointment Details</h2>
+
+            <div class="card">
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <strong>Appointment ID:</strong> @Model.appoimentid
+                        </div>
+                        <div class="col-md-6">
+                            <strong>Status:</strong>
+                            @switch (Model.status)
+                            {
+                                case smart_clinic.enums.AppointmentStatus.Pending:
+                                    <span class="badge bg-warning">Pending</span>
+                                    break;
+                                case smart_clinic.enums.AppointmentStatus.Confirmed:
+                                    <span class="badge bg-info">Confirmed</span>
+                                    break;
+                                case smart_clinic.enums.AppointmentStatus.Completed:
+                                    <span class="badge bg-success">Completed</span>
+                                    break;
+                                case smart_clinic.enums.AppointmentStatus.Cancelled:
+                                    <span class="badge bg-danger">Cancelled</span>
+                                    break;
+                                case smart_clinic.enums.AppointmentStatus.NoShow:
+                                    <span class="badge bg-secondary">No Show</span>
+                                    break;
+                            }
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <strong>Phone Number:</strong> @Model.PhoneNumber
+                        </div>
+                        <div class="col-md-6">
+                            <strong>Patient Name:</strong> @Model.Patient?.patientname
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <strong>Appointment Date:</strong> @Model.Appoinmentdate.ToString("yyyy-MM-dd")
+                        </div>
+                        <div class="col-md-6">
+                            <strong>Doctor ID:</strong> @Model.doctorid
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <strong>Start Time:</strong> @Model.startat.ToString("HH:mm")
+                        </div>
+                        <div class="col-md-6">
+                            <strong>End Time:</strong> @Model.endat.ToString("HH:mm")
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-12">
+                            <strong>Notes:</strong> @Model.notes
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-12">
+                            <strong>Last Updated:</strong> @Model.updateat.ToString("yyyy-MM-dd HH:mm")
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-3">
+                @if (Model.status == smart_clinic.enums.AppointmentStatus.Pending)
+                {
+                    <a href="@Url.Action("ConfirmArrival", new { id = Model.appoimentid })" class="btn btn-success">Confirm Arrival</a>
+                }
+                @if (Model.status == smart_clinic.enums.AppointmentStatus.Confirmed)
+                {
+                    <a href="@Url.Action("StartVisit", new { id = Model.appoimentid })" class="btn btn-primary">Start Visit</a>
+                }
+                @if (Model.status != smart_clinic.enums.AppointmentStatus.Completed && Model.status != smart_clinic.enums.AppointmentStatus.Cancelled)
+                {
+                    <a href="@Url.Action("Cancel", new { id = Model.appoimentid })" class="btn btn-danger">Cancel Appointment</a>
+                }
+                <a href="@Url.Action("Search")" class="btn btn-secondary">Back</a>
+            </div>
+        </div>
+    </div>
+</div>
