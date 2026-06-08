@@ -1,0 +1,85 @@
+﻿@model IEnumerable<smart_clinic.viewmodels.prescription.ResponsePrescriptionVM>
+
+@{
+    ViewData["Title"] = "Prescription Management";
+}
+
+<div class="container-fluid py-4">
+    <div class="card shadow-sm border-0">
+        <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+            <h5 class="mb-0 text-primary fw-bold">
+                <i class="fas fa-prescription me-2"></i>Medical Prescriptions List
+            </h5>
+            <div class="d-flex gap-2">
+                <form asp-action="Index" method="get" class="d-flex gap-2">
+                    <input type="date" name="date" class="form-control form-control-sm" value="@(ViewBag.date != null ? ((DateTime)ViewBag.date).ToString("yyyy-MM-dd") : "")" />
+                    <button type="submit" class="btn btn-sm btn-primary">Filter</button>
+                </form>
+                <a asp-action="Create" class="btn btn-sm btn-success">
+                    <i class="fas fa-plus me-1"></i> Add Prescription
+                </a>
+            </div>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="bg-light">
+                        <tr>
+                            <th class="ps-4">Prescription ID</th>
+                            <th>Patient</th>
+                            <th>Date</th>
+                            <th>Visit</th>
+                            <th>Number of Medications</th>
+                            <th class="text-end pe-4">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model != null && Model.Any())
+                        {
+                            @foreach (var prescription in Model)
+                            {
+                                <tr>
+                                    <td class="ps-4">#@prescription.prescriptionid</td>
+                                    <td>
+                                        <div class="fw-bold">@prescription.patientname</div>
+                                        <div class="text-muted small">@prescription.phonenumber</div>
+                                    </td>
+                                    <td>@prescription.prescriptiondate.ToString("yyyy-MM-dd")</td>
+                                    <td>
+                                        <a asp-controller="Visit" asp-action="Details" asp-route-id="@prescription.visitid" class="badge bg-light text-dark text-decoration-none">
+                                            Visit #@prescription.visitid
+                                        </a>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-info rounded-pill">@prescription.rescriptionitems.Count() Medication(s)</span>
+                                    </td>
+                                    <td class="text-end pe-4">
+                                        <div class="btn-group btn-group-sm">
+                                            <a asp-action="Details" asp-route-id="@prescription.prescriptionid" class="btn btn-info text-white" title="View & Print">
+                                                <i class="fas fa-print"></i>
+                                            </a>
+                                            <a asp-action="Edit" asp-route-id="@prescription.prescriptionid" class="btn btn-primary" title="Edit">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                            <a asp-action="Delete" asp-route-id="@prescription.prescriptionid" class="btn btn-danger" title="Delete">
+                                                <i class="fas fa-trash"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="6" class="text-center py-5 text-muted">
+                                    <i class="fas fa-info-circle me-2"></i> No prescriptions found
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

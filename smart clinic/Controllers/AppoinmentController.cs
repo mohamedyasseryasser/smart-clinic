@@ -5,6 +5,7 @@ using smart_clinic.enums;
 using smart_clinic.services.interfaces;
 using smart_clinic.viewmodels.Appoinment;
 using smart_clinic.viewmodels.General;
+using smart_clinic.viewmodels.Visit;
 using System.Threading.Tasks;
 
 namespace smart_clinic.Controllers
@@ -162,7 +163,7 @@ namespace smart_clinic.Controllers
         // GET: Appoinment/StartVisit/5
         public async Task<IActionResult> StartVisit(int id)
         {
-             
+
             var result = await _appoinmentService.GetAppoinmentById(id);
             if (!result.Success)
             {
@@ -171,9 +172,34 @@ namespace smart_clinic.Controllers
             if (result.Data.status != AppointmentStatus.Confirmed)
             {
                 TempData["ErrorMessage"] = "must attend patient first";
-                return RedirectToAction("Details", new { id = id });
+                return RedirectToAction("Details", new { id = result.Data.appoimentid });
             }
-            return View(result.Data);
+            var addvisitvm = new AddVisit
+            {
+                appoinmentid = result.Data.appoimentid,
+            };
+            ViewBag.PhoNenumber = result.Data.PhoneNumber;
+            ViewBag.patientname = result.Data.Patient.patientname;
+            ViewBag.Appoinmentdate = result.Data.Appoinmentdate;
+            return View(addvisitvm);
+        }
+        public async Task<IActionResult> CreateVisit(AddVisit vm)
+        {
+            var addvisitvm = new AddVisit
+            {
+                appoinmentid = vm.appoinmentid,
+                notes = vm.notes,
+                diagnosis = vm.diagnosis,
+            };
+            var newvisit =await visitservice.createvisit(addvisitvm);
+            if (!newvisit.Success)
+            {
+                logger.LogWarning(newvisit.Message);
+                ModelState.AddModelError(string.Empty, newvisit.Message);
+                return View("StartVisit",vm.appoinmentid);
+            }
+            
+            return RedirectToAction("Details", "Visit", new { id = newvisit.Data.visitid });
         }
         // GET: Appoinment/Cancel/5
         public async Task<IActionResult> Cancel(int id)

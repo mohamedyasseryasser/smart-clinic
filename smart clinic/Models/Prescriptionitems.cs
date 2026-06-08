@@ -12,6 +12,7 @@ namespace smart_clinic.Models
         public string Frequency { get; set; }
         public string Duration { get; set; }
         public string notes {  get; set; }
+ 
         //navigation proberity
         public int prescriptionid {  get; set; }
         [ForeignKey(nameof(prescriptionid))]

@@ -1,0 +1,87 @@
+﻿@model smart_clinic.viewmodels.medicine.ResponseMedicineVM
+
+@{
+    ViewData["Title"] = "Medicine Details";
+}
+
+<div class="container">
+    <div class="card shadow mb-4">
+        <div class="card-header py-3 d-flex justify-content-between align-items-center">
+            <h6 class="m-0 font-weight-bold text-primary">Medicine Details: @Model.Name</h6>
+            <div>
+                <a asp-action="Edit" asp-route-id="@Model.medicineId" class="btn btn-warning btn-sm text-white">
+                    <i class="fas fa-edit"></i> Edit
+                </a>
+                <a asp-action="Index" class="btn btn-secondary btn-sm">
+                    <i class="fas fa-arrow-left"></i> Back to List
+                </a>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <table class="table table-borderless">
+                        <tr>
+                            <th style="width: 30%">Medicine ID:</th>
+                            <td>@Model.medicineId</td>
+                        </tr>
+                        <tr>
+                            <th>Name:</th>
+                            <td>@Model.Name</td>
+                        </tr>
+                        <tr>
+                            <th>Category:</th>
+                            <td>@Model.CategoryName</td>
+                        </tr>
+                        <tr>
+                            <th>Supplier:</th>
+                            <td>@Model.SupplierName</td>
+                        </tr>
+                        <tr>
+                            <th>Notes:</th>
+                            <td>@Model.Category</td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="col-md-6">
+                    <table class="table table-borderless">
+                        <tr>
+                            <th style="width: 30%">Stock Quantity:</th>
+                            <td>
+                                <span >
+                                    @Model.StockQuantity
+                                </span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>Unit Price:</th>
+                            <td>@Model.UnitPrice.ToString("C")</td>
+                        </tr>
+                        <tr>
+                            <th>Reorder Level:</th>
+                            <td>@Model.RecordLevel</td>
+                        </tr>
+                        <tr>
+                            <th>Expiry Date:</th>
+                            <td>@Model.ExpiryDate.ToLongDateString()</td>
+                        </tr>
+                        <tr>
+                            <th>Created At:</th>
+                            <td>@Model.CreatedAt.ToString("g")</td>
+                        </tr>
+                        <tr>
+                            <th>AddedBy:</th>
+                            <td>@Model.AddedBy</td>
+                        </tr>
+                        <tr>
+                            <th>isdeleted:</th>
+                            <td>@Model.IsDeleted</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+

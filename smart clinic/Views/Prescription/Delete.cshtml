@@ -1,0 +1,108 @@
+﻿
+@model smart_clinic.viewmodels.prescription.ResponsePrescriptionVM
+@{
+    ViewData["Title"] = "Confirm Prescription Deletion";
+}
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2 class="text-danger">
+                    <i class="fas fa-exclamation-triangle"></i> Confirm Prescription Deletion
+                </h2>
+                <a href="@Url.Action("Details", new { id = Model.visitid })" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left"></i> Cancel
+                </a>
+            </div>
+
+            <div class="card border-danger shadow-sm">
+                <div class="card-header bg-danger text-white">
+                    <h5 class="mb-0">Are you sure you want to delete this prescription?</h5>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-warning">
+                        <i class="fas fa-info-circle"></i>
+                        <strong>Warning:</strong> This action will permanently delete the prescription and all associated medicines. This action cannot be undone.
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-sm-4">
+                            <strong>Prescription ID:</strong>
+                        </div>
+                        <div class="col-sm-8">
+                            #@Model.prescriptionid
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-sm-4">
+                            <strong>Prescription Date:</strong>
+                        </div>
+                        <div class="col-sm-8">
+                            @Model.prescriptiondate.ToString("dd/MM/yyyy HH:mm")
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-sm-4">
+                            <strong>Notes:</strong>
+                        </div>
+                        <div class="col-sm-8">
+                            @(string.IsNullOrWhiteSpace(Model.notes) ? "No notes available" : Model.notes)
+                        </div>
+                    </div>
+
+                    <hr />
+
+                    <h6>Medicines Included in the Prescription (@(Model.rescriptionitems?.Count ?? 0)):</h6>
+                    <div class="table-responsive">
+                        <table class="table table-sm table-bordered">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Medicine</th>
+                                    <th>Quantity</th>
+                                    <th>Dosage</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model.rescriptionitems != null && Model.rescriptionitems.Any())
+                                {
+                                    foreach (var item in Model.rescriptionitems)
+                                    {
+                                        <tr>
+                                            <td>Medicine #@item.mdeicineid</td>
+                                            <td>@item.quantity</td>
+                                            <td>@item.Dosage</td>
+                                        </tr>
+                                    }
+                                }
+                                else
+                                {
+                                    <tr>
+                                        <td colspan="3" class="text-center">No medicines available</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="card-footer bg-light">
+                    <form asp-action="DeletePrescription" method="post">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" asp-for="prescriptionid" name="id" />
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-danger">
+                                <i class="fas fa-trash"></i> Confirm Permanent Deletion
+                            </button>
+                            <a href="@Url.Action("Details", new { id = Model.visitid })" class="btn btn-secondary">
+                                <i class="fas fa-times"></i> Cancel and Return
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

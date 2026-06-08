@@ -17,10 +17,6 @@ namespace smart_clinic.viewmodels.medicine
         [MaxLength(100)]
         public string SupplierName { get; set; }
 
-        [Required(ErrorMessage = "Category is required")]
-        [MaxLength(50)]
-        public string Category { get; set; }
-
         [Required(ErrorMessage = "Unit price is required")]
         [Range(0.01, double.MaxValue, ErrorMessage = "Price must be greater than 0")]
         public decimal UnitPrice { get; set; }
@@ -35,18 +31,24 @@ namespace smart_clinic.viewmodels.medicine
 
         [Required(ErrorMessage = "Please select a category")]
         public int cat_id { get; set; }
-
-        public IEnumerable<SelectListItem>? Categories { get; set; }
+        public string? user_id {  get; set; }
+        public IEnumerable<SelectListItem>? Categories { get; set; }=new List<SelectListItem>();
     }
 
     public class UpdateMedicineVM : AddMedicineVM
     {
         [Required]
         public int medicineId { get; set; }
-    }
+        [Required(ErrorMessage = "Please select a category")]
+       
+        public bool IsDeleted { get; set; }
+
+      }
 
     public class ResponseMedicineVM
     {
+        public bool IsDeleted { get; set; }
+
         public int medicineId { get; set; }
         public int StockQuantity { get; set; }
         public string Name { get; set; }
@@ -58,6 +60,9 @@ namespace smart_clinic.viewmodels.medicine
         public DateTime ExpiryDate { get; set; }
         public int cat_id { get; set; }
         public string CategoryName { get; set; }
+        public string AddedBy {  get; set; }
+        public string user_id { get; set; }
+
     }
 }
 

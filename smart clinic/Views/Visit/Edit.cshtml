@@ -1,0 +1,72 @@
+﻿@model smart_clinic.viewmodels.VisitRepo.UpdateVisitVM
+
+@{
+    ViewData["Title"] = "Edit Visit";
+}
+
+<div class="container-fluid py-4">
+    <div class="row">
+        <div class="col-md-8 mx-auto">
+            <div class="card shadow-sm">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0 text-primary">
+                        <i class="fas fa-edit me-2"></i>Edit Visit Information
+                    </h5>
+                </div>
+
+                <div class="card-body">
+                    <form asp-action="Edit" method="post">
+                        <div asp-validation-summary="All" class="text-danger mb-3"></div>
+
+                        <input type="hidden" asp-for="visitid" />
+
+                        <div class="mb-3">
+                            <label asp-for="diagnosis" class="form-label fw-bold">Diagnosis</label>
+                            <textarea asp-for="diagnosis"
+                                      class="form-control"
+                                      rows="4"
+                                      placeholder="Enter the medical diagnosis here..."></textarea>
+                            <span asp-validation-for="diagnosis" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="notes" class="form-label fw-bold">Additional Notes</label>
+                            <textarea asp-for="notes"
+                                      class="form-control"
+                                      rows="3"
+                                      placeholder="Any additional notes..."></textarea>
+                            <span asp-validation-for="notes" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-4">
+                            <label asp-for="visitstatus" class="form-label fw-bold">Visit Status</label>
+                            <select asp-for="visitstatus"
+                                    class="form-select"
+                                    asp-items="Html.GetEnumSelectList<smart_clinic.enums.VisitStatus>()">
+                            </select>
+                            <span asp-validation-for="visitstatus" class="text-danger small"></span>
+                        </div>
+
+                        <div class="d-flex gap-2 pt-3 border-top">
+                            <button type="submit" class="btn btn-primary px-4">
+                                <i class="fas fa-save me-1"></i> Save Changes
+                            </button>
+
+                            <a asp-action="Details"
+                               asp-route-id="@Model.visitid"
+                               class="btn btn-outline-secondary">
+                                Cancel
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

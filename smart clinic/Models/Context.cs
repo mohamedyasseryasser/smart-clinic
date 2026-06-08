@@ -80,14 +80,14 @@ namespace smart_clinic.Models
             builder.Entity<Visit>()
                 .HasOne(v => v.Prescription)
                 .WithOne(p => p.Visit)
-                .HasForeignKey<Prescription>(p => p.visitid);
+                .HasForeignKey<Prescription>(p => p.visitid).OnDelete(DeleteBehavior.Cascade);
 
             // Visit → Invoice (1:1)
             // =========================
              builder.Entity<Visit>()
                 .HasOne(v => v.Invoice)
                 .WithOne(i => i.Visit)
-                .HasForeignKey<Invoice>(i => i.VisitId);
+                .HasForeignKey<Invoice>(i => i.VisitId).OnDelete(DeleteBehavior.Cascade);
 
             // Prescription → Items (1:M)
             builder.Entity<Prescriptionitems>().

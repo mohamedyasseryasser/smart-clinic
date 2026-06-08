@@ -1,4 +1,4 @@
-﻿@model smart_clinic.viewmodels.Appoinment.ResponseAppoimentVM;
+﻿@model smart_clinic.viewmodels.Visit.AddVisit;
 
 @{
     ViewData["Title"] = "Start Visit";
@@ -11,13 +11,13 @@
 
             <div class="card mb-3">
                 <div class="card-body">
-                    <p><strong>Patient:</strong> @Model.Patient?.patientname</p>
-                    <p><strong>Phone Number:</strong> @Model.PhoneNumber</p>
-                    <p><strong>Appointment Date:</strong> @Model.Appoinmentdate.ToString("yyyy-MM-dd")</p>
+                    <p><strong>Patient:</strong> @ViewBag.patientname</p>
+                    <p><strong>Phone Number:</strong> @ViewBag.PhoNenumber</p>
+                    <p><strong>Appointment Date:</strong> @ViewBag.Appoinmentdate.ToString("yyyy-MM-dd")</p>
                 </div>
             </div>
-            <form method="post" asp-action="createvisit" asp-controller="Visit">
-                <input type="hidden" name="id" value="@Model.appoimentid" />
+            <form method="post" asp-action="CreateVisit" asp-controller="Appoinment">
+                <input type="hidden" name="appoinmentid" value="@Model.appoinmentid" />
 
                 <div class="form-group mb-3">
                     <label for="notes" class="form-label">Visit Notes</label>
@@ -30,7 +30,7 @@
                 </div>
 
                 <button type="submit" class="btn btn-primary">Start Visit</button>
-                <a href="@Url.Action("Details", new { id = Model.appoimentid })" class="btn btn-secondary">Cancel</a>
+                <a href="@Url.Action("Details", new { id = Model.appoinmentid })" class="btn btn-secondary">Cancel</a>
             </form>
         </div>
     </div>

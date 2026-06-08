@@ -45,6 +45,12 @@
                             <span>Doctors</span>
                         </a>
                     </li>
+                    <li class="@(ViewContext.RouteData.Values["Controller"]?.ToString() == "Medicine" && ViewContext.RouteData.Values["Action"]?.ToString() == "Index" ? "active" : "")">
+                        <a asp-controller="Medicine" asp-action="Index">
+                            <i class="fas fa-user-md"></i>
+                            <span>Medicine</span>
+                        </a>
+                    </li>
                 }
 
                 <li class="@(ViewContext.RouteData.Values["Controller"]?.ToString() == "Patient" ? "active" : "")">
@@ -62,7 +68,7 @@
                 </li>
 
                 <li class="@(ViewContext.RouteData.Values["Controller"]?.ToString() == "Visit" ? "active" : "")">
-                    <a asp-controller="Visit" asp-action="getallvisit">
+                    <a asp-controller="Visit" asp-action="Index">
                         <i class="fas fa-notes-medical"></i>
                         <span>Visits</span>
                     </a>

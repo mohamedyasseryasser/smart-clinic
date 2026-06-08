@@ -1,0 +1,168 @@
+﻿@model smart_clinic.viewmodels.prescription.AddPrescriptionVM
+
+@{
+    ViewData["Title"] = "Create New Prescription";
+}
+
+<div class="container-fluid py-4">
+    <div class="row">
+        <div class="col-md-10 mx-auto">
+            <div class="card shadow-sm">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0 text-primary fw-bold">
+                        <i class="fas fa-prescription me-2"></i>Create Medical Prescription
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <form asp-action="Create" method="post" id="prescriptionForm">
+                        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <label asp-for="visitid" class="form-label fw-bold">Associated Visit</label>
+                                <select asp-for="visitid" class="form-select" asp-items="ViewBag.Visits">
+                                    <option value="">-- Select Visit --</option>
+                                </select>
+                                <span asp-validation-for="visitid" class="text-danger small"></span>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label asp-for="notes" class="form-label fw-bold">General Notes</label>
+                                <input asp-for="notes" class="form-control" placeholder="Optional prescription notes..." />
+                                <span asp-validation-for="notes" class="text-danger small"></span>
+                            </div>
+                        </div>
+
+                        <div class="card bg-light mb-4">
+                            <div class="card-header bg-secondary text-white d-flex justify-content-between align-items-center">
+                                <h6 class="mb-0">Prescribed Medications</h6>
+                                <button type="button" class="btn btn-sm btn-light" id="addItemBtn">
+                                    <i class="fas fa-plus me-1"></i> Add Medication
+                                </button>
+                            </div>
+
+                            <div class="card-body p-0">
+                                <div class="table-responsive">
+                                    <table class="table table-bordered mb-0" id="itemsTable">
+                                        <thead class="table-light">
+                                            <tr>
+                                                <th style="width: 30%">Medicine</th>
+                                                <th>Quantity</th>
+                                                <th>Dosage</th>
+                                                <th>Frequency</th>
+                                                <th>Duration</th>
+                                                <th>Notes</th>
+                                                <th>#</th>
+                                            </tr>
+                                        </thead>
+
+                                        <tbody id="itemsBody">
+                                            <!-- Items will be added here -->
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                                <div id="noItemsMsg" class="text-center py-4 text-muted">
+                                    No medications added. Click "Add Medication" to begin.
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-flex gap-2 pt-3 border-top">
+                            <button type="submit" class="btn btn-success px-5">
+                                <i class="fas fa-save me-1"></i> Save Prescription
+                            </button>
+
+                            <a asp-action="Index" class="btn btn-outline-secondary">
+                                Cancel
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <script>
+        $(document).ready(function () {
+            let itemIndex = 0;
+
+            function checkItems() {
+                if ($("#itemsBody tr").length > 0) {
+                    $("#noItemsMsg").hide();
+                    $("#itemsTable").show();
+                } else {
+                    $("#noItemsMsg").show();
+                    $("#itemsTable").hide();
+                }
+            }
+
+            $("#addItemBtn").click(function () {
+                const row = `
+                    <tr>
+                        <td>
+                            <select name="items[${itemIndex}].mdeicineid" class="form-select form-select-sm" required>
+                                <option value="">Select Medicine</option>
+                                @foreach (var item in (SelectList)ViewBag.Medicines)
+                                {
+                                        <option value="@item.Value">@item.Text</option>
+                                }
+                            </select>
+                        </td>
+
+                        <td>
+                            <input name="items[${itemIndex}].quantity" class="form-control form-control-sm" type="number" required />
+                        </td>
+
+                        <td>
+                            <input name="items[${itemIndex}].Dosage" class="form-control form-control-sm" required />
+                        </td>
+
+                        <td>
+                            <input name="items[${itemIndex}].Frequency" class="form-control form-control-sm" required />
+                        </td>
+
+                        <td>
+                            <input name="items[${itemIndex}].Duration" class="form-control form-control-sm" required />
+                        </td>
+
+                        <td>
+                            <input name="items[${itemIndex}].notes" class="form-control form-control-sm" />
+                        </td>
+
+                        <td>
+                            <button type="button" class="btn btn-sm btn-danger remove-item">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+
+                $("#itemsBody").append(row);
+                itemIndex++;
+                checkItems();
+            });
+
+            $(document).on("click", ".remove-item", function () {
+                $(this).closest("tr").remove();
+                checkItems();
+            });
+
+            checkItems();
+
+            // Auto-select visit if passed in query string
+            const urlParams = new URLSearchParams(window.location.search);
+            const visitId = urlParams.get('visitId');
+
+            if (visitId) {
+                $("#visitid").val(visitId);
+            }
+        });
+    </script>
+}

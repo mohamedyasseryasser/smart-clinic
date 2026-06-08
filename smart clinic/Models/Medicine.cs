@@ -15,9 +15,8 @@ namespace smart_clinic.Models
         public string SupplierName { get; set; } = string.Empty;
 
         public DateTime CreatedAt { get; set; }
-
-        public string Category { get; set; } = string.Empty;
-
+        public bool IsDeleted { get; set; }
+ 
         public decimal UnitPrice { get; set; }
 
         public int RecordLevel { get; set; }
@@ -25,11 +24,13 @@ namespace smart_clinic.Models
         public DateTime ExpiryDate { get; set; }
         //navigation proberity
         public ICollection<Prescriptionitems> Prescriptionitems { get; set; } = new List<Prescriptionitems>();
+        public string CategoryName {  get; set; }
         public int cat_id { get; set; }
         [ForeignKey(nameof(cat_id))]
         public Category category {  get; set; }
-        public string AddedBy { get; set; }
-        [ForeignKey("AddedBy")]
+        public string AddedBy {  get; set; }
+        public string user_id { get; set; }
+        [ForeignKey("user_id")]
         public Aplicationuser user { get; set; }
     }
 }

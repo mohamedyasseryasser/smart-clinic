@@ -29,6 +29,8 @@ namespace smart_clinic
             builder.Services.AddScoped<IPatient, PatientRepo>();
             builder.Services.AddScoped<IAppoinment,AppoinmentRepo>();
             builder.Services.AddScoped<IVisit,VisitRepo>();
+            builder.Services.AddScoped<IMedicine,medicinerepo>();
+            builder.Services.AddScoped<IPrescription,PrescriptionRepo>();
             builder.Services.AddScoped<ICategory,CategoryRepo>();
             builder.Services.AddControllersWithViews();
             //auto mapping 

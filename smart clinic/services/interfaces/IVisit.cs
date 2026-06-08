@@ -10,15 +10,22 @@ namespace smart_clinic.services.interfaces
 {
     public interface IVisit
     {
-      
-        public  Task<ResponseStatus<ResponseVisitVM>> createvisit(AddVisit vm);
 
-         public Task<ResponseStatus<ResponseVisitVM>> getvisitbyid(int id);
+    public    Task<ResponseStatus<ResponseVisitVM>> createvisit(AddVisit vm);
 
-         public Task<ResponseStatus<ResponseVisitVM>> updatevisit(UpdateVisitVM vm);
+     public   Task<ResponseStatus<ResponseVisitVM>> getvisitbyid(int id);
 
-        public  Task<ResponseStatus<IEnumerable<ResponseVisitVM>>> getallvisit(DateTime date, pagination pg)
-        ;
+      public  Task<ResponseStatus<ResponseVisitVM>> updatevisit(UpdateVisitVM vm);
+
+      public  Task<ResponseStatus<bool>> deletevisit(int id);
+
+       public Task<ResponseStatus<bool>> cancelvisit(int id);
+
+public        Task<ResponseStatus<ResponseVisitVM>> completevisit(int id);
+
+     public   Task<ResponseStatus<IEnumerable<ResponseVisitVM>>> GetAllVisits();
+
+public        Task<ResponseStatus<IEnumerable<ResponseVisitVM>>> getallvisit(DateTime date, pagination pg);
 
     }
 }

@@ -1,0 +1,105 @@
+﻿@model IEnumerable<smart_clinic.viewmodels.medicine.ResponseMedicineVM>
+
+@{
+    ViewData["Title"] = "Medicines";
+}
+
+<div class="container-fluid">
+    <div class="card shadow mb-4">
+        <div class="card-header py-3 d-flex justify-content-between align-items-center">
+            <h6 class="m-0 font-weight-bold text-primary">Medicines List</h6>
+            <a asp-action="Create" class="btn btn-primary btn-sm">
+                <i class="fas fa-plus"></i> Add New Medicine
+            </a>
+        </div>
+        <div class="card-body">
+            <form method="get" class="mb-4">
+                <div class="row">
+                    <div class="col-md-4">
+                        <input type="text" name="searchTerm" class="form-control" placeholder="Search by name or supplier..." value="@ViewBag.SearchTerm" />
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Filter by Category</label>
+                        <select name="cat_id" class="form-control" asp-items="@ViewBag.Categories">
+                            <option value="">All Categories</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Filter by Status</label>
+                        <select name="isdeleted" class="form-control">
+                            <option value="">All Statuses</option>
+                            <option value="true" selected="@(ViewBag.isdeleted == true ? "selected" : null)">deleted only</option>
+                            <option value="false" selected="@(ViewBag.isdeleted == false ? "selected" : null)">active Only</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <button type="submit" class="btn btn-secondary w-100">Filter</button>
+                    </div>
+                </div>
+            </form>
+
+            <div class="table-responsive">
+                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                    <thead class="thead-light">
+                        <tr>
+                            <th>Name</th>
+                            <th>Category</th>
+                            <th>Stock</th>
+                            <th>Price</th>
+                            <th>Expiry Date</th>
+                            <th>Supplier</th>
+                           
+                            <th>Actions</th>
+                            <th>isdeleted</th>
+
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model != null && Model.Any())
+                        {
+                            foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td>@item.Name</td>
+                                    <td>@item.CategoryName</td>
+                                    <td>
+                                        <span  >
+                                            @item.StockQuantity
+                                        </span>
+                                    </td>
+                                    <td>@item.UnitPrice.ToString("C")</td>
+                                    <td>@item.ExpiryDate.ToShortDateString()</td>
+                                    <td>@item.SupplierName</td>
+                                    <td>
+                                        <div class="btn-group" role="group">
+                                            <a asp-action="Details" asp-route-id="@item.medicineId" class="btn btn-info btn-sm" title="Details">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                            <a asp-action="Edit" asp-route-id="@item.medicineId" class="btn btn-warning btn-sm" title="Edit">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                            <form asp-action="Delete" asp-route-id="@item.medicineId" method="post" onsubmit="return confirm('Are you sure you want to delete this medicine?');" style="display:inline;">
+                                                @Html.AntiForgeryToken()
+                                                <button type="submit" class="btn btn-danger btn-sm" title="Delete">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </td>
+                                    <td>@item.IsDeleted</td>
+
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="7" class="text-center">No medicines found.</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,115 @@
+﻿@model smart_clinic.viewmodels.Visit.ResponseVisitVM
+
+@{
+    ViewData["Title"] = "Visit Details";
+}
+
+<div class="container-fluid py-4">
+    <div class="row">
+        <div class="col-md-8 mx-auto">
+            <div class="card shadow-sm">
+                <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0 text-primary">
+                        <i class="fas fa-notes-medical me-2"></i>Visit Details #@Model.visitid
+                    </h5>
+                    <div>
+                        @if (Model.visitstatus == smart_clinic.enums.VisitStatus.InProgress)
+                        {
+                            <span class="badge bg-warning text-dark">In Progress</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-success">Completed</span>
+                        }
+                    </div>
+                </div>
+
+                <div class="card-body">
+                    <div class="row mb-4">
+                        <div class="col-sm-6">
+                            <h6 class="text-muted small text-uppercase">Patient</h6>
+                            <p class="fw-bold mb-0">@Model.ResponseAppoimentVM?.Patient?.patientname</p>
+                            <p class="text-muted small">@Model.ResponseAppoimentVM?.PhoneNumber</p>
+                        </div>
+
+                        <div class="col-sm-6 text-sm-end">
+                            <h6 class="text-muted small text-uppercase">Date</h6>
+                            <p class="fw-bold mb-0">@Model.visitdate.ToString("yyyy-MM-dd")</p>
+                            <p class="text-muted small">@Model.visitdate.ToString("HH:mm")</p>
+                        </div>
+                    </div>
+
+                    <hr />
+
+                    <div class="mb-4">
+                        <h6 class="text-muted small text-uppercase">Diagnosis</h6>
+                        <div class="p-3 bg-light rounded">
+                            @(string.IsNullOrEmpty(Model.diagnosis) ? "No diagnosis has been recorded yet." : Model.diagnosis)
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <h6 class="text-muted small text-uppercase">Notes</h6>
+                        <div class="p-3 bg-light rounded">
+                            @(string.IsNullOrEmpty(Model.notes) ? "No notes available." : Model.notes)
+                        </div>
+                    </div>
+
+ 
+
+                    <div class="d-flex flex-wrap gap-2 mt-4 pt-3 border-top">
+                        @if (Model.visitstatus == smart_clinic.enums.VisitStatus.InProgress)
+                        {
+                            <form asp-action="Complete"
+                                  asp-route-id="@Model.visitid"
+                                  method="post"
+                                  class="d-inline">
+                                <button type="submit"
+                                        class="btn btn-success"
+                                        onclick="return confirm('Are you sure you want to complete this visit? You will be redirected to create a prescription.')">
+                                    <i class="fas fa-check me-1"></i> Complete Visit
+                                </button>
+                            </form>
+
+                            <a asp-action="Edit"
+                               asp-route-id="@Model.visitid"
+                               class="btn btn-primary">
+                                <i class="fas fa-edit me-1"></i> Edit / Add Diagnosis
+                            </a>
+
+                            <form asp-action="CancelVisit"
+                                  asp-route-id="@Model.visitid"
+                                  method="post"
+                                  class="d-inline">
+                                <button type="submit"
+                                        class="btn btn-outline-danger"
+                                        onclick="return confirm('Are you sure you want to cancel this visit? The appointment will be reverted to Confirmed status.')">
+                                    <i class="fas fa-times me-1"></i> Cancel Visit
+                                </button>
+                            </form>
+                        }
+                        else
+                        {
+                            <a asp-action="Edit"
+                               asp-route-id="@Model.visitid"
+                               class="btn btn-outline-primary">
+                                <i class="fas fa-edit me-1"></i> Edit Visit
+                            </a>
+
+                                 <a asp-controller="Prescription"
+                                   asp-action="Create"
+                                   asp-route-visitId="@Model.visitid"
+                                   class="btn btn-info text-white">
+                                    <i class="fas fa-prescription me-1"></i> Add Prescription
+                                </a>
+                         }
+
+                        <a asp-action="Index" class="btn btn-secondary ms-auto">
+                            Back to List
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,109 @@
+﻿@model smart_clinic.viewmodels.prescriptionitems.UpdatePrescriptionitemvm
+@{
+    ViewData["Title"] = "Edit Medicine";
+}
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-10 offset-md-1">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2>
+                    <i class="fas fa-edit"></i> Edit Medicine
+                </h2>
+                <a href="@Url.Action("Details", new { id = Model.prescriptionid })" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left"></i> Cancel
+                </a>
+            </div>
+
+            @if (!ViewData.ModelState.IsValid)
+            {
+                <div class="alert alert-danger">
+                    <strong>Errors occurred:</strong>
+                    <ul>
+                        @foreach (var modelState in ViewData.ModelState.Values)
+                        {
+                            foreach (var error in modelState.Errors)
+                            {
+                                <li>@error.ErrorMessage</li>
+                            }
+                        }
+                    </ul>
+                </div>
+            }
+
+            <form method="post" class="card border-0 shadow-sm">
+                @Html.AntiForgeryToken()
+
+                <div class="card-body">
+                    <input type="hidden" asp-for="prescriptionitemid" />
+                    <input type="hidden" asp-for="prescriptionid" />
+
+                    <div class="mb-3">
+                        <label asp-for="mdeicineid" class="form-label"><strong>Medicine</strong></label>
+                        <select asp-for="mdeicineid" class="form-select" asp-items="ViewBag.Medicines">
+                            <option value="">-- Select Medicine --</option>
+                        </select>
+                        <span asp-validation-for="mdeicineid" class="text-danger"></span>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label asp-for="quantity" class="form-label"><strong>Quantity</strong></label>
+                                <input asp-for="quantity" type="number" class="form-control" min="1" />
+                                <span asp-validation-for="quantity" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label asp-for="Dosage" class="form-label"><strong>Dosage</strong></label>
+                                <input asp-for="Dosage" type="text" class="form-control" />
+                                <span asp-validation-for="Dosage" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label asp-for="Frequency" class="form-label"><strong>Frequency</strong></label>
+                                <input asp-for="Frequency" type="text" class="form-control" />
+                                <span asp-validation-for="Frequency" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label asp-for="Duration" class="form-label"><strong>Duration</strong></label>
+                                <input asp-for="Duration" type="text" class="form-control" />
+                                <span asp-validation-for="Duration" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="notes" class="form-label"><strong>Additional Notes</strong></label>
+                        <textarea asp-for="notes" class="form-control" rows="2"></textarea>
+                        <span asp-validation-for="notes" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="card-footer bg-light">
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-success">
+                            <i class="fas fa-save"></i> Save Changes
+                        </button>
+                        <a href="@Url.Action("Details", new { id = Model.prescriptionid })" class="btn btn-secondary">
+                            <i class="fas fa-times"></i> Cancel
+                        </a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

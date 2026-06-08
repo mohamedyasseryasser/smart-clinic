@@ -35,6 +35,7 @@ namespace smart_clinic.services.reporesity
                     return response;
                 }
                 var visit = Mapper.Map<Visit>(vm);
+                visit.appoinmentid = vm.appoinmentid;
                 visit.visitdate = DateTime.Now;
                 visit.visitstatus = VisitStatus.InProgress;
                 await Context.Visits.AddAsync(visit);
@@ -96,6 +97,11 @@ namespace smart_clinic.services.reporesity
                     response.Errors.Add(response.Message);
                     return response;
                 }
+                vistt.visitdate = DateTime.Now;
+                vistt.notes = vm.notes;
+                vistt.visitstatus = vm.visitstatus;
+                vistt.diagnosis = vm.diagnosis;
+                await Context.SaveChangesAsync();
                 response.Success=true;
                 response.Data = Mapper.Map<ResponseVisitVM>(vm);
                 return response;
@@ -107,7 +113,150 @@ namespace smart_clinic.services.reporesity
             }
             return response;
         }
-        //getallvisits
+        //deletevisit
+        public async Task<ResponseStatus<bool>> deletevisit(int id)
+        {
+            var response = new ResponseStatus<bool>();
+            try
+            {
+                var visit=await Context.Visits.FindAsync(id);
+                if (visit==null)
+                {
+                    response.Success=false;
+                    response.Message = "visit is not found";
+                    response.Errors.Add(response.Message);
+                    response.Data = false;
+                    return response;
+                }
+                Context.Visits.Remove(visit);
+                await Context.SaveChangesAsync();
+                response.Success = true;
+                response.Data = true;
+                return response;
+            }
+            catch (Exception ex)
+            {
+                response.Success = false;
+                response.Message = $"{ex.Message}";
+                response.Errors.Add(response.Message);
+                response.Data = false;
+                return response;
+            }
+        }
+        //cancelvisit
+        public async Task<ResponseStatus<bool>> cancelvisit(int id)
+        {
+            var response = new ResponseStatus<bool>();
+            using var transaction = await Context.Database.BeginTransactionAsync();
+
+            try
+            {
+                var visit = await Context.Visits
+                    .Include(v => v.Appoinment)
+                    .FirstOrDefaultAsync(v => v.visitid == id);
+
+                if (visit == null)
+                {
+                    response.Success = false;
+                    response.Message = "Visit not found";
+                    return response;
+                }
+ 
+                if (visit.Appoinment != null)
+                {
+                    visit.Appoinment.status = AppointmentStatus.Confirmed;
+                }
+
+                Context.Visits.Remove(visit);
+
+                await Context.SaveChangesAsync();
+                await transaction.CommitAsync();
+
+                response.Success = true;
+                response.Data = true;
+                response.Message = "Visit canceled successfully";
+
+                return response;
+            }
+            catch (Exception ex)
+            {
+                await transaction.RollbackAsync();
+
+                response.Success = false;
+                response.Message = "An error occurred while canceling the visit";
+
+                return response;
+            }
+        }
+        //completevisit
+        public async Task<ResponseStatus<ResponseVisitVM>> completevisit(int id)
+        {
+            var response = new ResponseStatus<ResponseVisitVM>();
+            using var transaction = await Context.Database.BeginTransactionAsync();
+
+            try
+            {
+                var visit = await Context.Visits
+                    .Include(v => v.Appoinment)
+                    .FirstOrDefaultAsync(v => v.visitid == id);
+
+                if (visit == null)
+                {
+                    response.Success = false;
+                    response.Message = "Visit not found";
+                    return response;
+                }
+
+                visit.visitstatus = VisitStatus.Completed;
+
+                if (visit.Appoinment != null)
+                {
+                    visit.Appoinment.status = AppointmentStatus.Completed;
+                }
+
+                await Context.SaveChangesAsync();
+                await transaction.CommitAsync();
+
+                response.Success = true;
+                response.Message = "Visit completed successfully";
+                response.Data = Mapper.Map<ResponseVisitVM>(visit);
+
+                return response;
+            }
+            catch (Exception ex)
+            {
+                await transaction.RollbackAsync();
+
+                response.Success = false;
+                response.Message = "An error occurred while completing the visit";
+
+                return response;
+            }
+        }
+        //getall
+        public async Task<ResponseStatus<IEnumerable<ResponseVisitVM>>> GetAllVisits()
+        {
+            var response = new ResponseStatus<IEnumerable<ResponseVisitVM>>();
+            try
+            {
+                var visits = await Context.Visits
+                    .Include(v => v.Appoinment)
+                    .ThenInclude(a => a.Patient)
+                    .OrderByDescending(v => v.visitid)
+                    .ToListAsync();
+
+                response.Success = true;
+                response.Data = Mapper.Map<IEnumerable<ResponseVisitVM>>(visits);
+                return response;
+            }
+            catch (Exception ex)
+            {
+                response.Success = false;
+                response.Message = $"حدث خطأ: {ex.Message}";
+                return response;
+            }
+        }
+        //displayallvisits
         public  async Task<ResponseStatus<IEnumerable<ResponseVisitVM>>> getallvisit(DateTime date ,pagination pg)
         {
             var response= new ResponseStatus<IEnumerable<ResponseVisitVM>>();
@@ -137,4 +286,3 @@ namespace smart_clinic.services.reporesity
         }
     }
 }
-

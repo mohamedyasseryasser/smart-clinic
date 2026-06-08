@@ -83,9 +83,7 @@ namespace smart_clinic.services.reporesity
                 return response;
 
             }
-        }
-
-        
+      }  
         //getcatbyid
         public async Task<ResponseStatus<ResponseCategoryVM>> getcategorybyid(int id)
         {
@@ -199,7 +197,10 @@ namespace smart_clinic.services.reporesity
             var response = new ResponseStatus<IEnumerable<ResponseCategoryVM>>();
             try
             {
-                var categories =await Context.categories.AsNoTracking().ToListAsync();
+                var categories =await Context.categories.
+                    Where(c=>c.isactive==true).
+                    AsNoTracking().
+                    ToListAsync();
                 response.Data = Mapper.Map<IEnumerable<ResponseCategoryVM>>(categories);
                 response.Success = true;
             }
