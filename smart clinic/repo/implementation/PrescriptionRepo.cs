@@ -167,7 +167,7 @@ namespace smart_clinic.services.reporesity
                 var existingPrescription = await _context.Prescriptions.Include(p => p.Visit).
                     ThenInclude(v => v.Appoinment)
                     .ThenInclude(a => a.Patient)
-                                                    .Include(p => p.items).ThenInclude(i=>i.Medicine)
+                                                    .Include(p => p.items).ThenInclude(i => i.Medicine)
                                                     .FirstOrDefaultAsync(p => p.prescriptionid == vm.prescriptionid);
                 if (existingPrescription == null)
                 {
@@ -177,30 +177,32 @@ namespace smart_clinic.services.reporesity
                     return response;
                 }
                 //update basic prescription info
-               existingPrescription.notes = vm.notes;
-               existingPrescription.prescriptiondate= vm.prescriptiondate;
+                existingPrescription.notes = vm.notes;
+                existingPrescription.prescriptiondate = vm.prescriptiondate;
                 //get olditems id
-                var olditemids=existingPrescription.items.Select(i=>i.prescriptionitemid).ToList();
+                var olditemids = existingPrescription.items.Select(i => i.prescriptionitemid).ToList();
                 //get newitems id
                 var newitemids = vm.items.Select(i => i.prescriptionitemid).ToList();
                 //get items in oldlistitems and removed from newlistitems
                 var removeditems = existingPrescription.items.
-                    Where(i=>!newitemids.Contains(i.prescriptionitemid));
+                    Where(i => !newitemids.Contains(i.prescriptionitemid));
                 //removed
                 _context.PrescriptionItems.RemoveRange(removeditems);
                 //add or update
                 foreach (var item in vm.items)
                 {
                     //add
-                    if (item.prescriptionitemid==null&&!item.prescriptionitemid.HasValue)
+                    if (item.prescriptionitemid == null || item.prescriptionitemid == 0)
                     {
-                        existingPrescription.items.Add(_mapper.Map<Prescriptionitems>(item));
+                        var newItem = _mapper.Map<Prescriptionitems>(item);
+                        newItem.prescriptionid = existingPrescription.prescriptionid;
+                        existingPrescription.items.Add(newItem);
                     }
                     //update
-                    else if (olditemids.Contains(item.prescriptionitemid.Value)&&item.prescriptionitemid.HasValue)
+                    else if (olditemids.Contains(item.prescriptionitemid.Value) && item.prescriptionitemid.HasValue)
                     {
                         var exititem = existingPrescription.items.
-                            FirstOrDefault(i=>i.prescriptionitemid==item.prescriptionitemid.Value);
+                            FirstOrDefault(i => i.prescriptionitemid == item.prescriptionitemid.Value);
                         _mapper.Map(item, exititem);
                         _context.PrescriptionItems.Update(exititem);
                     }

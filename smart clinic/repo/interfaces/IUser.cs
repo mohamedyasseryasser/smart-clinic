@@ -17,6 +17,8 @@ namespace smart_clinic.services.interfaces
         public Task<ResponseStatus<IEnumerable<responseadminviewmodel>>> getallactiveadmins();
 
         // Doctor Methods
+        public  Task<ResponseStatus<int>> getadoctorcount();
+
         public Task<IEnumerable<Doctor>> getdoctors();
         public Task<ResponseStatus<doctorresponseviewmodel>> adddoctor(doctorviewmodel vm);
     public    Task<ResponseStatus<doctorresponseviewmodel>> updatedoctor(updatedoctorviewmodel vm);

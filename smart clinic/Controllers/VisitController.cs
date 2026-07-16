@@ -40,6 +40,7 @@ namespace smart_clinic.Controllers
 
             if (!result.Success)
             {
+               
                 return NotFound();
             }
 

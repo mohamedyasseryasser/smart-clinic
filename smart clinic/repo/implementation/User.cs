@@ -315,6 +315,24 @@ namespace smart_clinic.services.reporesity
             }
         }
         // ===================== DOCTOR =====================
+        //getdoctorcount
+        public async Task<ResponseStatus<int>> getadoctorcount()
+        {
+            var response = new ResponseStatus<int>();
+            try
+            {
+                response.Data = await Context.Doctors.CountAsync(a => a.status != userstatus.active);
+                response.Success = true;
+                return response;
+            }
+            catch (Exception ex)
+            {
+                response.Success = false;
+                response.Message = ex.Message;
+                response.Errors.Add(ex.Message);
+                return response;
+            }
+        }
         // create doctor
         public async Task<ResponseStatus<doctorresponseviewmodel>> adddoctor(doctorviewmodel vm)
         {
@@ -553,6 +571,7 @@ namespace smart_clinic.services.reporesity
                 return response;
             }
         }
+
         public async Task<IEnumerable<Doctor>> getdoctors()
         {
             return await Context.Doctors.Include(d=>d.user).ToListAsync();

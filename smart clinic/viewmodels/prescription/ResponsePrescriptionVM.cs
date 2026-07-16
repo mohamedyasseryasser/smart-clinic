@@ -12,8 +12,8 @@ namespace smart_clinic.viewmodels.prescription
         public int visitid { get; set; }
         public int doctorid { get; set; }
         public int patientid { get; set; }
-        public string patientname {  get; set; }
-        public string phonenumber {  get; set; }
-        public ICollection<ResponseRescriptionitemVM> rescriptionitems { get; set; }=new List<ResponseRescriptionitemVM>();
+        public string patientname { get; set; }
+        public string phonenumber { get; set; }
+        public List<ResponseRescriptionitemVM> prescriptionitems { get; set; } = new List<ResponseRescriptionitemVM>();
     }
 }

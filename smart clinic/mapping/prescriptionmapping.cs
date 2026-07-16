@@ -9,35 +9,40 @@ namespace smart_clinic.mapping
     {
         public prescriptionmapping()
         {
+            // AddPrescriptionVM to Prescription
+            CreateMap<AddPrescriptionVM, Prescription>()
+                .ForMember(dest => dest.prescriptionid, opt => opt.Ignore())
+                .ForMember(dest => dest.items, opt => opt.Ignore());
+
+            // Prescription to ResponsePrescriptionVM
             CreateMap<Prescription, ResponsePrescriptionVM>()
-                .ForMember(dest => dest.patientid,
-                    opt => opt.MapFrom(src =>
-                        src.Visit.Appoinment.patientid))
+                .ForMember(dest => dest.patientname, opt => opt.MapFrom(src => src.Visit.Appoinment.Patient.patientname))
+                .ForMember(dest => dest.phonenumber, opt => opt.MapFrom(src => src.Visit.Appoinment.Patient.phonenumber))
+                .ForMember(dest => dest.prescriptionitems, opt => opt.MapFrom(src => src.items));
 
-                .ForMember(dest => dest.doctorid,
-                    opt => opt.MapFrom(src =>
-                        src.Visit.Appoinment.doctorid))
+            // UpdatePrescriptionvm to Prescription
+            CreateMap<UpdatePrescriptionvm, Prescription>()
+                .ForMember(dest => dest.items, opt => opt.Ignore());
 
-                .ForMember(dest => dest.rescriptionitems,
-                    opt => opt.MapFrom(src => src.items))
+            // Prescription to UpdatePrescriptionvm
+            CreateMap<Prescription, UpdatePrescriptionvm>()
+                .ForMember(dest => dest.items, opt => opt.MapFrom(src => src.items));
 
-              .ForMember(dest => dest.phonenumber,
-                    opt => opt.MapFrom(src =>
-                        src.Visit.Appoinment.PhoneNumber))
+            // AddPrescriptionItemVM to Prescriptionitems
+            CreateMap<AddPrescriptionItemVM, Prescriptionitems>()
+                .ForMember(dest => dest.prescriptionitemid, opt => opt.Ignore())
+                .ForMember(dest => dest.Medicine, opt => opt.Ignore());
 
-                .ForMember(dest => dest.patientname,
-                    opt => opt.MapFrom(src =>
-                        src.Visit.Appoinment.Patient.patientname)).ReverseMap();
-            CreateMap<Prescription, AddPrescriptionVM>().ReverseMap();
-            CreateMap<Prescription, UpdatePrescriptionvm>().ReverseMap();
-
+            // Prescriptionitems to ResponseRescriptionitemVM
             CreateMap<Prescriptionitems, ResponseRescriptionitemVM>()
-                .ForMember(dest => dest.Name,
-                    opt => opt.MapFrom(src =>
-                        src.Medicine.Name)).ReverseMap();
-            CreateMap<Prescription, AddPrescriptionVM>().ReverseMap(); 
-            CreateMap<Prescriptionitems, AddPrescriptionItemVM>().ReverseMap();
-            CreateMap<Prescriptionitems, UpdatePrescriptionitemvm>().ReverseMap();
+                .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Medicine.Name));
+
+            // UpdatePrescriptionitemvm to Prescriptionitems
+            CreateMap<UpdatePrescriptionitemvm, Prescriptionitems>()
+                .ForMember(dest => dest.Medicine, opt => opt.Ignore());
+
+            // Prescriptionitems to UpdatePrescriptionitemvm
+            CreateMap<Prescriptionitems, UpdatePrescriptionitemvm>();
         }
     }
 }

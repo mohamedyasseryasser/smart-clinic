@@ -1,5 +1,4 @@
-﻿
-@model smart_clinic.viewmodels.prescription.ResponsePrescriptionVM
+﻿@model smart_clinic.viewmodels.prescription.ResponsePrescriptionVM
 @{
     ViewData["Title"] = "Confirm Prescription Deletion";
 }
@@ -11,7 +10,7 @@
                 <h2 class="text-danger">
                     <i class="fas fa-exclamation-triangle"></i> Confirm Prescription Deletion
                 </h2>
-                <a href="@Url.Action("Details", new { id = Model.visitid })" class="btn btn-outline-secondary">
+                <a href="@Url.Action("Details", new { id = Model.prescriptionid })" class="btn btn-outline-secondary">
                     <i class="fas fa-arrow-left"></i> Cancel
                 </a>
             </div>
@@ -55,7 +54,7 @@
 
                     <hr />
 
-                    <h6>Medicines Included in the Prescription (@(Model.rescriptionitems?.Count ?? 0)):</h6>
+                    <h6>Medicines Included in the Prescription (@(Model.prescriptionitems?.Count ?? 0)):</h6>
                     <div class="table-responsive">
                         <table class="table table-sm table-bordered">
                             <thead class="table-light">
@@ -66,9 +65,9 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @if (Model.rescriptionitems != null && Model.rescriptionitems.Any())
+                                @if (Model.prescriptionitems != null && Model.prescriptionitems.Any())
                                 {
-                                    foreach (var item in Model.rescriptionitems)
+                                    foreach (var item in Model.prescriptionitems)
                                     {
                                         <tr>
                                             <td>Medicine #@item.mdeicineid</td>
@@ -89,14 +88,14 @@
                 </div>
 
                 <div class="card-footer bg-light">
-                    <form asp-action="DeletePrescription" method="post">
+                    <form asp-action="Delete" method="post">
                         @Html.AntiForgeryToken()
                         <input type="hidden" asp-for="prescriptionid" name="id" />
                         <div class="d-flex gap-2">
                             <button type="submit" class="btn btn-danger">
                                 <i class="fas fa-trash"></i> Confirm Permanent Deletion
                             </button>
-                            <a href="@Url.Action("Details", new { id = Model.visitid })" class="btn btn-secondary">
+                            <a href="@Url.Action("Details", new { id = Model.prescriptionid })" class="btn btn-secondary">
                                 <i class="fas fa-times"></i> Cancel and Return
                             </a>
                         </div>

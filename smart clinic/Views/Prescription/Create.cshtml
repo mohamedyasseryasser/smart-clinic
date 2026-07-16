@@ -15,18 +15,12 @@
                 </div>
                 <div class="card-body">
                     <form asp-action="Create" method="post" id="prescriptionForm">
-                        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+                        <div asp-validation-summary="All" class="text-danger mb-3"></div>
 
                         <div class="row mb-4">
-                            <div class="col-md-6">
-                                <label asp-for="visitid" class="form-label fw-bold">Associated Visit</label>
-                                <select asp-for="visitid" class="form-select" asp-items="ViewBag.Visits">
-                                    <option value="">-- Select Visit --</option>
-                                </select>
-                                <span asp-validation-for="visitid" class="text-danger small"></span>
-                            </div>
+                            <input asp-for="visitid" type="hidden" />
 
-                            <div class="col-md-6">
+                            <div class="col-md-12">
                                 <label asp-for="notes" class="form-label fw-bold">General Notes</label>
                                 <input asp-for="notes" class="form-control" placeholder="Optional prescription notes..." />
                                 <span asp-validation-for="notes" class="text-danger small"></span>

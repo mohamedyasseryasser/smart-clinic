@@ -1,4 +1,7 @@
-﻿using smart_clinic.viewmodels.Appoinment;
+﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
+using smart_clinic.Models;
+using smart_clinic.viewmodels.Appoinment;
 using smart_clinic.viewmodels.General;
 
 namespace smart_clinic.services.interfaces
@@ -16,5 +19,7 @@ namespace smart_clinic.services.interfaces
         Task<ResponseStatus<IEnumerable<ResponseAppoimentVM>>> SearchAppoinment(SearchAppoinmentVM vm);
 
         Task<ResponseStatus<bool>> CancelAppoinment(int id);
+        public  Task<ResponseStatus<IEnumerable<ResponseAppoimentVM>>> getallappoinment(DateTime? date, pagination pg)
+        ;
     }
 }

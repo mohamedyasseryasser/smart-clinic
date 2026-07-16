@@ -11,6 +11,6 @@ namespace smart_clinic.viewmodels.prescription
         public string notes { get; set; }
         public int? visitid { get; set; }
 
-        public ICollection<UpdatePrescriptionitemvm> items { get; set; }=new List<UpdatePrescriptionitemvm>();
+        public List<UpdatePrescriptionitemvm> items { get; set; } = new List<UpdatePrescriptionitemvm>();
     }
 }

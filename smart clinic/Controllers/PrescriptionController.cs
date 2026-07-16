@@ -50,10 +50,11 @@ namespace smart_clinic.Controllers
         }
 
         // GET: Prescription/Create
-        public async Task<IActionResult> Create()
+        public async Task<IActionResult> Create(int visitid)
         {
             await PopulateDropdowns();
-            return View(new AddPrescriptionVM { items = new List<AddPrescriptionItemVM>() });
+ 
+            return View(new AddPrescriptionVM { visitid=visitid , items = new List<AddPrescriptionItemVM>() });
         }
 
         // POST: Prescription/Create
@@ -89,7 +90,7 @@ namespace smart_clinic.Controllers
                     prescriptiondate = response.Data.prescriptiondate,
                     notes = response.Data.notes,
                     visitid=response.Data.visitid,
-                     items = response.Data.rescriptionitems.Select(item => new UpdatePrescriptionitemvm
+                     items = response.Data.prescriptionitems.Select(item => new UpdatePrescriptionitemvm
                     {
                         prescriptionitemid = item.prescriptionitemid,
                         quantity = item.quantity,

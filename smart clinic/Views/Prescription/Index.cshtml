@@ -51,14 +51,14 @@
                                         </a>
                                     </td>
                                     <td>
-                                        <span class="badge bg-info rounded-pill">@prescription.rescriptionitems.Count() Medication(s)</span>
+                                        <span class="badge bg-info rounded-pill">@prescription.prescriptionitems.Count() Medication(s)</span>
                                     </td>
                                     <td class="text-end pe-4">
                                         <div class="btn-group btn-group-sm">
                                             <a asp-action="Details" asp-route-id="@prescription.prescriptionid" class="btn btn-info text-white" title="View & Print">
                                                 <i class="fas fa-print"></i>
                                             </a>
-                                            <a asp-action="Edit" asp-route-id="@prescription.prescriptionid" class="btn btn-primary" title="Edit">
+                                            <a asp-action="Edit" asp-controller="Prescription" asp-route-id="@prescription.prescriptionid" class="btn btn-primary" title="Edit">
                                                 <i class="fas fa-edit"></i>
                                             </a>
                                             <a asp-action="Delete" asp-route-id="@prescription.prescriptionid" class="btn btn-danger" title="Delete">

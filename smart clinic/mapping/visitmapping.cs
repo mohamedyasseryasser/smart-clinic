@@ -10,8 +10,14 @@ namespace smart_clinic.mapping
     {
         public visitmapping() 
         {
-            CreateMap<AddVisit,Visit>(); 
-            CreateMap<Visit, ResponseVisitVM>();
+            CreateMap<AddVisit, Visit>();
+
+            CreateMap<Visit, ResponseVisitVM>()
+                .ForMember(
+                    dest => dest.ResponseAppoimentVM,
+                    opt => opt.MapFrom(src => src.Appoinment)
+                );
+
             CreateMap<UpdateVisitVM, ResponseVisitVM>();
         }
     }

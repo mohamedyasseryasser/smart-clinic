@@ -66,7 +66,12 @@
                         <span>Appointments</span>
                     </a>
                 </li>
-
+                <li class="@(ViewContext.RouteData.Values["Controller"]?.ToString() == "Prescription" ? "active" : "")">
+                    <a asp-controller="Prescription" asp-action="Index">
+                        <i class="fas fa-calendar-check"></i>
+                        <span>Prescriptions</span>
+                    </a>
+                </li>
                 <li class="@(ViewContext.RouteData.Values["Controller"]?.ToString() == "Visit" ? "active" : "")">
                     <a asp-controller="Visit" asp-action="Index">
                         <i class="fas fa-notes-medical"></i>

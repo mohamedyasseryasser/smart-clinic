@@ -7,6 +7,7 @@ using smart_clinic.services.interfaces;
 using smart_clinic.viewmodels.Appoinment;
 using smart_clinic.viewmodels.departmentvm;
 using smart_clinic.viewmodels.General;
+using smart_clinic.viewmodels.medicine;
 using smart_clinic.viewmodels.Patient;
 using System.Threading.Tasks;
 
@@ -271,8 +272,40 @@ namespace smart_clinic.services.reporesity
                 return response;
             }
         }
-        //getallaponimentbydoctorid
-        //getallappoinmentbyreceptionistid
+        //getallappoinment
+        public async Task<ResponseStatus<IEnumerable<ResponseAppoimentVM>>> getallappoinment(DateTime? date,pagination pg)
+        {
+            var response = new ResponseStatus<IEnumerable<ResponseAppoimentVM>>();
+            try
+            {
+                IQueryable<Appoinment> query = Context.Appointments.
+                    Include(a => a.Doctor).
+                    Include(a => a.resptionist).
+                    Include(a => a.Patient).AsNoTracking();
+
+                if (date.HasValue)
+                {
+                    query = query.Where(a=>a.Appoinmentdate==date);
+                }
+                
+                var totalCount =await query.CountAsync();
+                var items = await query
+                                      .Skip((pg.PageNumber - 1) * pg.PageSize)
+                                      .Take(pg.PageSize)
+                                      .ToListAsync();
+
+                response.Data = Mapper.Map<IEnumerable<ResponseAppoimentVM>>(items);
+                response.Success = true;
+                return response;
+            }
+            catch (Exception ex)
+            {
+                response.Success = false;
+                response.Message = "Error retrieving appoinments";
+                response.Errors.Add(ex.Message);
+                return response;
+            }
+        }
         //validation time
         private async Task<ResponseStatus<ResponseAppoimentVM>> ValidationTime(ValidationTimeVM vm)
         {

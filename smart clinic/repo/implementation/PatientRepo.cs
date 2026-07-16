@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Azure;
 using Microsoft.EntityFrameworkCore;
+using smart_clinic.enums;
 using smart_clinic.Models;
 using smart_clinic.services.interfaces;
 using smart_clinic.viewmodels.departmentvm;
@@ -350,7 +351,23 @@ namespace smart_clinic.services.reporesity
         {
             return await Context.Patients.AnyAsync(p => p.nationalid == id);
         }
+        public async Task<ResponseStatus<int>> getpatientcount()
+        {
+            var response = new ResponseStatus<int>();
+            try
+            {
+                response.Data = await Context.Patients.CountAsync(a => a.isvalid != false);
+                response.Success = true;
+                return response;
+            }
+            catch (Exception ex)
+            {
+                response.Success = false;
+                response.Message = ex.Message;
+                response.Errors.Add(ex.Message);
+                return response;
+            }
+        }
 
-       
     }
 }

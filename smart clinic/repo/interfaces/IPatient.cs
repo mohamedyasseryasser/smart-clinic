@@ -14,7 +14,7 @@ namespace smart_clinic.services.interfaces
         public Task<ResponseStatus<IEnumerable<ResponsePatientVM>>> GetAllAsync(pagination pg,
                   string? patientname = null, string? phone = null, long? nationalid = null, bool? isactive = null);
         public Task<ResponseStatus<ResponsePatientVM>> GetPatientDetailsAsync(int id);
-
+        public Task<ResponseStatus<int>> getpatientcount();
 
     }
 }

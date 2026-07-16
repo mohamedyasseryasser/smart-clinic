@@ -157,7 +157,7 @@ namespace smart_clinic.Controllers
                 return View(result.Data);
             }
 
-            TempData["SuccessMessage"] = "تم تأكيد حضور المريض.";
+            TempData["SuccessMessage"] = "confirmarrival";
             return RedirectToAction("Details", new { id = result.Data.appoimentid });
         }
         // GET: Appoinment/StartVisit/5

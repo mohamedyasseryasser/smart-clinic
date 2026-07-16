@@ -1,4 +1,6 @@
-﻿@{
+﻿@model smart_clinic.viewmodels.home.dashboardvm
+
+@{
     ViewData["Title"] = "Clinic Dashboard";
 }
 
@@ -9,52 +11,58 @@
                 <div class="d-flex justify-content-between align-items-center">
                     <div>
                         <h6 class="text-uppercase mb-1">Total Patients</h6>
-                        <h2 class="mb-0">1,284</h2>
+                        <h2 class="mb-0">@Model.patientcount</h2>
                     </div>
                     <i class="fas fa-user-injured fa-2x opacity-50"></i>
                 </div>
             </div>
         </div>
     </div>
+
+    ```
     <div class="col-md-3">
         <div class="card bg-success text-white">
             <div class="card-body">
                 <div class="d-flex justify-content-between align-items-center">
                     <div>
                         <h6 class="text-uppercase mb-1">Appointments</h6>
-                        <h2 class="mb-0">42</h2>
+                        <h2 class="mb-0">@Model.appoinmentcount</h2>
                     </div>
                     <i class="fas fa-calendar-check fa-2x opacity-50"></i>
                 </div>
             </div>
         </div>
     </div>
+
     <div class="col-md-3">
         <div class="card bg-info text-white">
             <div class="card-body">
                 <div class="d-flex justify-content-between align-items-center">
                     <div>
                         <h6 class="text-uppercase mb-1">Total Doctors</h6>
-                        <h2 class="mb-0">18</h2>
+                        <h2 class="mb-0">@Model.totaldoctors</h2>
                     </div>
                     <i class="fas fa-user-md fa-2x opacity-50"></i>
                 </div>
             </div>
         </div>
     </div>
+
     <div class="col-md-3">
         <div class="card bg-warning text-white">
             <div class="card-body">
                 <div class="d-flex justify-content-between align-items-center">
                     <div>
                         <h6 class="text-uppercase mb-1">Revenue</h6>
-                        <h2 class="mb-0">$4,520</h2>
+                        <h2 class="mb-0">@Model.revenue.ToString("C")</h2>
                     </div>
                     <i class="fas fa-dollar-sign fa-2x opacity-50"></i>
                 </div>
             </div>
         </div>
     </div>
+    ```
+
 </div>
 
 <div class="row mt-4">
@@ -62,62 +70,91 @@
         <div class="card">
             <div class="card-header d-flex justify-content-between align-items-center">
                 <span>Recent Appointments</span>
-                <a asp-controller="Appoinment" asp-action="Search" class="btn btn-sm btn-outline-primary">View All</a>
+                <a asp-controller="Appoinment"
+                   asp-action="Search"
+                   class="btn btn-sm btn-outline-primary">
+                    View All
+                </a>
             </div>
+
+            ```
             <div class="card-body p-0">
                 <div class="table-responsive">
                     <table class="table table-hover mb-0">
                         <thead class="bg-light">
                             <tr>
                                 <th>Patient</th>
-                                <th>Doctor</th>
-                                <th>Time</th>
+                                 <th>Date</th>
                                 <th>Status</th>
                             </tr>
                         </thead>
+
                         <tbody>
-                            <tr>
-                                <td>John Doe</td>
-                                <td>Dr. Smith</td>
-                                <td>10:30 AM</td>
-                                <td><span class="badge bg-success">Confirmed</span></td>
-                            </tr>
-                            <tr>
-                                <td>Jane Williams</td>
-                                <td>Dr. Adams</td>
-                                <td>11:15 AM</td>
-                                <td><span class="badge bg-warning">Pending</span></td>
-                            </tr>
-                            <tr>
-                                <td>Robert Brown</td>
-                                <td>Dr. Wilson</td>
-                                <td>01:00 PM</td>
-                                <td><span class="badge bg-info">In Progress</span></td>
-                            </tr>
+                            @if (Model.items != null && Model.items.Any())
+                            {
+                                @foreach (var item in Model.items)
+                                {
+                                    <tr>
+                                        <td>@item.Patient.patientname</td>
+                                         <td>@item.Appoinmentdate.ToString("dd/MM/yyyy hh:mm tt")</td>
+                                        <td>
+                                            <span class="badge bg-success">
+                                                @item.status
+                                            </span>
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="4" class="text-center text-muted py-3">
+                                        No appointments found
+                                    </td>
+                                </tr>
+                            }
                         </tbody>
+
                     </table>
                 </div>
             </div>
         </div>
     </div>
+
     <div class="col-md-4">
         <div class="card">
             <div class="card-header">
                 Quick Actions
             </div>
+
             <div class="card-body">
                 <div class="d-grid gap-2">
-                    <a asp-controller="Patient" asp-action="Create" class="btn btn-outline-primary text-start">
-                        <i class="fas fa-user-plus me-2"></i> Register New Patient
+
+                    <a asp-controller="Patient"
+                       asp-action="Create"
+                       class="btn btn-outline-primary text-start">
+                        <i class="fas fa-user-plus me-2"></i>
+                        Register New Patient
                     </a>
-                    <a asp-controller="Appoinment" asp-action="Create" class="btn btn-outline-success text-start">
-                        <i class="fas fa-calendar-plus me-2"></i> Schedule Appointment
+
+                    <a asp-controller="Appoinment"
+                       asp-action="Create"
+                       class="btn btn-outline-success text-start">
+                        <i class="fas fa-calendar-plus me-2"></i>
+                        Schedule Appointment
                     </a>
-                    <a asp-controller="Department" asp-action="Index" class="btn btn-outline-info text-start">
-                        <i class="fas fa-hospital me-2"></i> View Departments
+
+                    <a asp-controller="Department"
+                       asp-action="Index"
+                       class="btn btn-outline-info text-start">
+                        <i class="fas fa-hospital me-2"></i>
+                        View Departments
                     </a>
+
                 </div>
             </div>
         </div>
     </div>
+    ```
+
 </div>

@@ -1,6 +1,7 @@
-﻿@model smart_clinic.viewmodels.prescriptionitems.UpdatePrescriptionitemvm
+﻿@model smart_clinic.viewmodels.prescription.UpdatePrescriptionvm
+
 @{
-    ViewData["Title"] = "Edit Medicine";
+    ViewData["Title"] = "Edit Prescription";
 }
 
 <div class="container mt-4">
@@ -8,7 +9,7 @@
         <div class="col-md-10 offset-md-1">
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <h2>
-                    <i class="fas fa-edit"></i> Edit Medicine
+                    <i class="fas fa-edit"></i> Edit Prescription #@Model.prescriptionid
                 </h2>
                 <a href="@Url.Action("Details", new { id = Model.prescriptionid })" class="btn btn-outline-secondary">
                     <i class="fas fa-arrow-left"></i> Cancel
@@ -31,59 +32,98 @@
                 </div>
             }
 
-            <form method="post" class="card border-0 shadow-sm">
+            <form method="post" class="card border-0 shadow-sm" id="prescriptionForm">
                 @Html.AntiForgeryToken()
 
                 <div class="card-body">
-                    <input type="hidden" asp-for="prescriptionitemid" />
                     <input type="hidden" asp-for="prescriptionid" />
+                    <input type="hidden" asp-for="visitid" />
 
                     <div class="mb-3">
-                        <label asp-for="mdeicineid" class="form-label"><strong>Medicine</strong></label>
-                        <select asp-for="mdeicineid" class="form-select" asp-items="ViewBag.Medicines">
-                            <option value="">-- Select Medicine --</option>
-                        </select>
-                        <span asp-validation-for="mdeicineid" class="text-danger"></span>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="mb-3">
-                                <label asp-for="quantity" class="form-label"><strong>Quantity</strong></label>
-                                <input asp-for="quantity" type="number" class="form-control" min="1" />
-                                <span asp-validation-for="quantity" class="text-danger"></span>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="mb-3">
-                                <label asp-for="Dosage" class="form-label"><strong>Dosage</strong></label>
-                                <input asp-for="Dosage" type="text" class="form-control" />
-                                <span asp-validation-for="Dosage" class="text-danger"></span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="mb-3">
-                                <label asp-for="Frequency" class="form-label"><strong>Frequency</strong></label>
-                                <input asp-for="Frequency" type="text" class="form-control" />
-                                <span asp-validation-for="Frequency" class="text-danger"></span>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="mb-3">
-                                <label asp-for="Duration" class="form-label"><strong>Duration</strong></label>
-                                <input asp-for="Duration" type="text" class="form-control" />
-                                <span asp-validation-for="Duration" class="text-danger"></span>
-                            </div>
-                        </div>
+                        <label asp-for="prescriptiondate" class="form-label"><strong>Prescription Date</strong></label>
+                        <input asp-for="prescriptiondate" type="datetime-local" class="form-control" />
+                        <span asp-validation-for="prescriptiondate" class="text-danger"></span>
                     </div>
 
                     <div class="mb-3">
-                        <label asp-for="notes" class="form-label"><strong>Additional Notes</strong></label>
-                        <textarea asp-for="notes" class="form-control" rows="2"></textarea>
+                        <label asp-for="notes" class="form-label"><strong>General Notes</strong></label>
+                        <textarea asp-for="notes" class="form-control" rows="3"></textarea>
                         <span asp-validation-for="notes" class="text-danger"></span>
+                    </div>
+
+                    <div class="card bg-light mb-4">
+                        <div class="card-header bg-secondary text-white d-flex justify-content-between align-items-center">
+                            <h6 class="mb-0">Prescribed Medications</h6>
+                            <button type="button" class="btn btn-sm btn-light" id="addItemBtn">
+                                <i class="fas fa-plus me-1"></i> Add Medication
+                            </button>
+                        </div>
+
+                        <div class="card-body p-0">
+                            <div class="table-responsive">
+                                <table class="table table-bordered mb-0" id="itemsTable">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th style="width: 30%">Medicine</th>
+                                            <th>Quantity</th>
+                                            <th>Dosage</th>
+                                            <th>Frequency</th>
+                                            <th>Duration</th>
+                                            <th>Notes</th>
+                                            <th>#</th>
+                                        </tr>
+                                    </thead>
+
+                                    <tbody id="itemsBody">
+                                        @if (Model.items != null)
+                                        {
+                                            for (int i = 0; i < Model.items.Count; i++)
+                                            {
+                                                <tr>
+                                                    <td>
+                                                        <input type="hidden" asp-for="items[i].prescriptionitemid" />
+                                                        <input type="hidden" asp-for="items[i].prescriptionid" />
+                                                        <select asp-for="items[i].mdeicineid" class="form-select form-select-sm" asp-items="ViewBag.Medicines" required>
+                                                            <option value="">Select Medicine</option>
+                                                        </select>
+                                                        <span asp-validation-for="items[i].mdeicineid" class="text-danger"></span>
+                                                    </td>
+                                                    <td>
+                                                        <input asp-for="items[i].quantity" type="number" class="form-control form-control-sm" min="1" required />
+                                                        <span asp-validation-for="items[i].quantity" class="text-danger"></span>
+                                                    </td>
+                                                    <td>
+                                                        <input asp-for="items[i].Dosage" type="text" class="form-control form-control-sm" required />
+                                                        <span asp-validation-for="items[i].Dosage" class="text-danger"></span>
+                                                    </td>
+                                                    <td>
+                                                        <input asp-for="items[i].Frequency" type="text" class="form-control form-control-sm" required />
+                                                        <span asp-validation-for="items[i].Frequency" class="text-danger"></span>
+                                                    </td>
+                                                    <td>
+                                                        <input asp-for="items[i].Duration" type="text" class="form-control form-control-sm" required />
+                                                        <span asp-validation-for="items[i].Duration" class="text-danger"></span>
+                                                    </td>
+                                                    <td>
+                                                        <input asp-for="items[i].notes" type="text" class="form-control form-control-sm" />
+                                                        <span asp-validation-for="items[i].notes" class="text-danger"></span>
+                                                    </td>
+                                                    <td>
+                                                        <button type="button" class="btn btn-sm btn-danger remove-item">
+                                                            <i class="fas fa-trash"></i>
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            }
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <div id="noItemsMsg" class="text-center py-4 text-muted" style="display: none;">
+                                No medications added. Click "Add Medication" to begin.
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -106,4 +146,67 @@
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
+
+    <script>
+        $(document).ready(function () {
+            let itemIndex = @(Model.items != null ? Model.items.Count : 0);
+
+            function checkItems() {
+                if ($("#itemsBody tr").length > 0) {
+                    $("#noItemsMsg").hide();
+                    $("#itemsTable").show();
+                } else {
+                    $("#noItemsMsg").show();
+                    $("#itemsTable").hide();
+                }
+            }
+
+            $("#addItemBtn").click(function () {
+                const row = `
+                    <tr>
+                        <td>
+                            <select name="items[${itemIndex}].mdeicineid" class="form-select form-select-sm" required>
+                                <option value="">Select Medicine</option>
+                                @foreach (var item in (SelectList)ViewBag.Medicines)
+                                {
+                                        <option value="@item.Value">@item.Text</option>
+                                }
+                            </select>
+                        </td>
+                        <td>
+                            <input name="items[${itemIndex}].quantity" class="form-control form-control-sm" type="number" min="1" required />
+                        </td>
+                        <td>
+                            <input name="items[${itemIndex}].Dosage" class="form-control form-control-sm" required />
+                        </td>
+                        <td>
+                            <input name="items[${itemIndex}].Frequency" class="form-control form-control-sm" required />
+                        </td>
+                        <td>
+                            <input name="items[${itemIndex}].Duration" class="form-control form-control-sm" required />
+                        </td>
+                        <td>
+                            <input name="items[${itemIndex}].notes" class="form-control form-control-sm" />
+                        </td>
+                        <td>
+                            <button type="button" class="btn btn-sm btn-danger remove-item">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+
+                $("#itemsBody").append(row);
+                itemIndex++;
+                checkItems();
+            });
+
+            $(document).on("click", ".remove-item", function () {
+                $(this).closest("tr").remove();
+                checkItems();
+            });
+
+            checkItems();
+        });
+    </script>
 }

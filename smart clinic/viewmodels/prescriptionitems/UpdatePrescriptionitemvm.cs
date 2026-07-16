@@ -14,6 +14,6 @@ namespace smart_clinic.viewmodels.prescriptionitems
         public string notes { get; set; }
         public int mdeicineid { get; set; }
         public int? prescriptionid { get; set; }
-        public ICollection<SelectListItem> medicines { get; set; }=new List<SelectListItem>();
+        public ICollection<SelectListItem> medicines { get; set; } = new List<SelectListItem>();
     }
 }
