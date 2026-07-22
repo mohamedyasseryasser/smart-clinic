@@ -9,6 +9,8 @@ namespace smart_clinic.Models
         [Key]
         public int InvoiceId { get; set; }
 
+        public decimal cost { get; set; }
+
         public decimal TotalAmount { get; set; }
 
         public decimal Tax { get; set; }

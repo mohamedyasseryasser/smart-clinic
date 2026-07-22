@@ -60,11 +60,25 @@
                     </a>
                 </li>
 
-                <li class="@(ViewContext.RouteData.Values["Controller"]?.ToString() == "Appoinment" ? "active" : "")">
-                    <a asp-controller="Appoinment" asp-action="Search">
+                <li class="nav-item dropdown @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Appoinment" ? "active" : "")">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownAppt" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                         <i class="fas fa-calendar-check"></i>
                         <span>Appointments</span>
                     </a>
+                    <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="navbarDropdownAppt">
+                        <li><a class="dropdown-item" asp-controller="Appoinment" asp-action="ViewAllAppointments">View Appointments</a></li>
+                        <li><a class="dropdown-item" asp-controller="Appoinment" asp-action="Search">Add Appointment</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item dropdown @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Invoice" ? "active" : "")">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownInvoice" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fas fa-file-invoice-dollar"></i>
+                        <span>Invoices</span>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="navbarDropdownInvoice">
+                        <li><a class="dropdown-item" asp-controller="Invoice" asp-action="Index">All Invoices</a></li>
+                        <li><a class="dropdown-item" asp-controller="Invoice" asp-action="Create">Create Invoice</a></li>
+                    </ul>
                 </li>
                 <li class="@(ViewContext.RouteData.Values["Controller"]?.ToString() == "Prescription" ? "active" : "")">
                     <a asp-controller="Prescription" asp-action="Index">

@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using smart_clinic.filter;
 using smart_clinic.Models;
+using smart_clinic.repo.interfaces;
 using smart_clinic.services.interfaces;
 using smart_clinic.viewmodels.General;
 using smart_clinic.viewmodels.home;
@@ -19,23 +20,27 @@ namespace smart_clinic.Controllers
         private readonly IUser userservice;
         private readonly IPatient patientservice;
         private readonly IAppoinment appoinmentservice;
+        private readonly IInvoice invoiceservice;
 
         public HomeController(
             ILogger<HomeController> logger,
             IUser userservice,
             IPatient patientservice,
-            IAppoinment appoinmentservice)
+            IAppoinment appoinmentservice,
+            IInvoice invoiceservice)
         {
             _logger = logger;
             this.userservice = userservice;
             this.patientservice = patientservice;
             this.appoinmentservice = appoinmentservice;
+            this.invoiceservice = invoiceservice;
         }
-       
+
         public async Task<IActionResult> Index()
         {
             var doctorcount = await userservice.getadoctorcount();
             var patientcount = await patientservice.getpatientcount();
+            var revenue = await invoiceservice.GetTotalRevenueAsync();
 
             var appointmentResponse =
                 await appoinmentservice.getallappoinment(
@@ -50,12 +55,15 @@ namespace smart_clinic.Controllers
             {
                 totaldoctors = doctorcount.Data,
                 patientcount = patientcount.Data,
+                revenue = revenue,
                 appoinmentcount = appointmentResponse.Data.Count(),
                 items = appointmentResponse.Data.ToList()
             };
 
             return View(vm);
         }
+
+       
         public IActionResult Privacy()
         {
             return View();

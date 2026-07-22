@@ -21,7 +21,7 @@ namespace smart_clinic.Controllers
 
         public AppoinmentController(IAppoinment appoinmentService,
             IPatient patientService,
-            ILogger<AppoinmentController> logger,IUser userservice,IVisit visitservice)
+            ILogger<AppoinmentController> logger, IUser userservice, IVisit visitservice)
         {
             _appoinmentService = appoinmentService;
             _patientService = patientService;
@@ -43,7 +43,7 @@ namespace smart_clinic.Controllers
             {
                 return View(vm);
             }
- 
+
             var result = await _appoinmentService.SearchAppoinment(vm);
             if (!result.Success)
             {
@@ -55,9 +55,9 @@ namespace smart_clinic.Controllers
         }
         private async Task loaddoctorsandreceptionists(AddAppoinmentVM vm)
         {
-           
+
             //load doctors dropdownlist
-            var doctors =await userservice.getdoctors();
+            var doctors = await userservice.getdoctors();
             vm.doctorsvm = doctors.Select(d => new SelectListItem
             {
                 Value = d.DoctorId.ToString(),
@@ -70,7 +70,7 @@ namespace smart_clinic.Controllers
                 Value = d.resptionistid.ToString(),
                 Text = d.user.UserName
             }).ToList();
-           
+
         }
         // GET: Appoinment/Create
         public async Task<IActionResult> Create()
@@ -83,38 +83,38 @@ namespace smart_clinic.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(AddAppoinmentVM vm)
         {
-             
-                //check validation
-                if (!ModelState.IsValid)
-                {
-                    logger.LogWarning("Invalid addapoinmentvm attempt (ModelState invalid)");
-                    return View(vm);
-                }
-                var result = await _appoinmentService.CreateAppoinment(vm);
-                if (!result.Success)
-                {
-                    logger.LogWarning($"Create appointment failed: {result.Message}");
-                    //check patient
-                    if (!string.IsNullOrEmpty(vm.PhoneNumber))
-                    {
-                        var check = await _patientService.getpatientbyphonenumber(vm.PhoneNumber);
-                        if (!check.Success)
-                        {
-                            logger.LogWarning($"phone number is not found:{result.Message}");
-                            return RedirectToAction("Create", "Patient");
-                        }
-                    }
-                    foreach (var error in result.Errors)
-                    {
-                        ModelState.AddModelError(string.Empty, error);
-                    }
-                    await loaddoctorsandreceptionists(vm);
-                    return View(vm);
-                }
-                return RedirectToAction("Details", new { id = result.Data.appoimentid });
-            
-           
+
+            //check validation
+            if (!ModelState.IsValid)
+            {
+                logger.LogWarning("Invalid addapoinmentvm attempt (ModelState invalid)");
+                return View(vm);
             }
+            var result = await _appoinmentService.CreateAppoinment(vm);
+            if (!result.Success)
+            {
+                logger.LogWarning($"Create appointment failed: {result.Message}");
+                //check patient
+                if (!string.IsNullOrEmpty(vm.PhoneNumber))
+                {
+                    var check = await _patientService.getpatientbyphonenumber(vm.PhoneNumber);
+                    if (!check.Success)
+                    {
+                        logger.LogWarning($"phone number is not found:{result.Message}");
+                        return RedirectToAction("Create", "Patient");
+                    }
+                }
+                foreach (var error in result.Errors)
+                {
+                    ModelState.AddModelError(string.Empty, error);
+                }
+                await loaddoctorsandreceptionists(vm);
+                return View(vm);
+            }
+            return RedirectToAction("Details", new { id = result.Data.appoimentid });
+
+
+        }
         // GET: Appoinment/Details/5
         public async Task<IActionResult> Details(int id)
         {
@@ -137,12 +137,12 @@ namespace smart_clinic.Controllers
                 return NotFound();
             }
             var patient = await _patientService.getpatientbyphonenumber(result.Data.PhoneNumber);
-            var vm = new UpdateAppoinmentStateVM 
+            var vm = new UpdateAppoinmentStateVM
             {
-             phone=result.Data.PhoneNumber,
-             patientname=patient.Data.patientname,
-             AppoinmentId=result.Data.appoimentid,
-             Status=AppointmentStatus.Confirmed,
+                phone = result.Data.PhoneNumber,
+                patientname = patient.Data.patientname,
+                AppoinmentId = result.Data.appoimentid,
+                Status = AppointmentStatus.Confirmed,
             };
             return View(vm);
         }
@@ -191,14 +191,14 @@ namespace smart_clinic.Controllers
                 notes = vm.notes,
                 diagnosis = vm.diagnosis,
             };
-            var newvisit =await visitservice.createvisit(addvisitvm);
+            var newvisit = await visitservice.createvisit(addvisitvm);
             if (!newvisit.Success)
             {
                 logger.LogWarning(newvisit.Message);
                 ModelState.AddModelError(string.Empty, newvisit.Message);
-                return View("StartVisit",vm.appoinmentid);
+                return View("StartVisit", vm.appoinmentid);
             }
-            
+
             return RedirectToAction("Details", "Visit", new { id = newvisit.Data.visitid });
         }
         // GET: Appoinment/Cancel/5
@@ -224,6 +224,16 @@ namespace smart_clinic.Controllers
             }
             TempData["SuccessMessage"] = "appoinment canceled";
             return RedirectToAction("Search");
+        }
+
+        public async Task<IActionResult> ViewAllAppointments(DateTime? date, int pageNumber = 1, int pageSize = 10)
+        {
+            var searchDate = date ?? DateTime.Today;
+            var pagination = new pagination { PageNumber = pageNumber, PageSize = pageSize };
+            var result = await _appoinmentService.getallappoinment(searchDate, pagination);
+
+            ViewBag.SelectedDate = searchDate.ToString("yyyy-MM-dd");
+            return View(result.Data);
         }
     }
 }

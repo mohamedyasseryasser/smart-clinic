@@ -2,6 +2,8 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using smart_clinic.Models;
+using smart_clinic.repo.implementation;
+using smart_clinic.repo.interfaces;
 using smart_clinic.services.interfaces;
 using smart_clinic.services.reporesity;
 
@@ -32,6 +34,8 @@ namespace smart_clinic
             builder.Services.AddScoped<IMedicine,medicinerepo>();
             builder.Services.AddScoped<IPrescription,PrescriptionRepo>();
             builder.Services.AddScoped<ICategory,CategoryRepo>();
+            builder.Services.AddScoped<IInvoice, InvoiceRepo>();
+
             builder.Services.AddControllersWithViews();
             //auto mapping 
             builder.Services.AddAutoMapper(typeof(Program));

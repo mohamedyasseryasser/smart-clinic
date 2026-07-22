@@ -13,7 +13,8 @@ namespace smart_clinic.services.interfaces
         Task<ResponseStatus<ResponseMedicineVM>> UpdateAsync(UpdateMedicineVM vm);
         Task<ResponseStatus<bool>> DeleteAsync(int id);
         Task<ResponseStatus<bool>> ExistsAsync(int id);
-        public   Task<ResponseStatus<IEnumerable<ResponseMedicineVM>>> getactivemedicine()
-;
+        public   Task<ResponseStatus<IEnumerable<ResponseMedicineVM>>> getactivemedicine();
+        public  Task<decimal> GetPrescriptionCostAsync(int prescriptionId);
+
     }
 }

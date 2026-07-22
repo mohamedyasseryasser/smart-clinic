@@ -238,5 +238,13 @@ namespace smart_clinic.services.reporesity
                 return response;
             }
         }
+        public async Task<decimal> GetPrescriptionCostAsync(int prescriptionId)
+        {
+            var total = await _context.PrescriptionItems
+                .Where(pi => pi.prescriptionid == prescriptionId)
+                .Include(pi => pi.Medicine)
+                .SumAsync(pi => pi.quantity * pi.Medicine.UnitPrice);
+            return total;
+        }
     }
 }

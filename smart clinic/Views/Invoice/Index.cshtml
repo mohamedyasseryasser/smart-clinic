@@ -1,0 +1,129 @@
+﻿@using smart_clinic.viewmodels.Invoice
+@model IEnumerable<responseinvoicevm>
+
+@{
+    ViewData["Title"] = "Billing & Invoices";
+}
+
+<div class="container-fluid py-4">
+    <div class="card shadow-sm border-0">
+        <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+            <h5 class="mb-0 text-primary fw-bold">
+                <i class="fas fa-file-invoice-dollar me-2"></i>Invoices Management
+            </h5>
+            <a asp-action="Create" class="btn btn-primary btn-sm shadow-sm">
+                <i class="fas fa-plus me-1"></i> New Invoice
+            </a>
+        </div>
+        <div class="card-body">
+            <!-- Filter Section -->
+            <div class="bg-light p-3 rounded mb-4">
+                <form asp-action="Index" method="get" class="row g-3 align-items-end">
+                    <div class="col-md-4">
+                        <label class="form-label small fw-bold text-muted text-uppercase">Patient Name</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-white border-end-0"><i class="fas fa-search text-muted"></i></span>
+                            <input type="text" name="patientName" class="form-control border-start-0" placeholder="Search patient..." value="@ViewBag.PatientName" />
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label small fw-bold text-muted text-uppercase">Date</label>
+                        <input type="date" name="date" class="form-control" value="@ViewBag.Date" />
+                    </div>
+                    <div class="col-md-4">
+                        <button type="submit" class="btn btn-secondary w-100 shadow-sm">
+                            <i class="fas fa-filter me-1"></i> Search Invoices
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead class="bg-light text-muted small text-uppercase">
+                        <tr>
+                            <th class="border-0">Inv #</th>
+                            <th class="border-0">Patient & Date</th>
+                            <th class="border-0 text-end">Subtotal</th>
+                            <th class="border-0 text-end">Tax/Disc</th>
+                            <th class="border-0 text-end">Final Amount</th>
+                            <th class="border-0 text-center">Status</th>
+                            <th class="border-0 text-end">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td class="fw-bold">@item.InvoiceId</td>
+                                <td>
+                                    <div class="fw-bold text-dark">@item.PatientName</div>
+                                    <div class="small text-muted">Visit: @item.VisitDate.ToShortDateString()</div>
+                                </td>
+                                <td class="text-end">
+                                    <div class="small text-muted">Appt: @item.appoinmentcost.ToString("C")</div>
+                                    <div class="small text-muted">Presc: @item.prescriptioncost.ToString("C")</div>
+                                    <div class="fw-bold">@item.TotalAmount.ToString("C")</div>
+                                </td>
+                                <td class="text-end">
+                                    <div class="small text-danger">-@item.Discount.ToString("C")</div>
+                                    <div class="small text-info">+@item.Tax.ToString("C")</div>
+                                </td>
+                                <td class="text-end fw-bold text-primary">@item.FinalAmount.ToString("C")</td>
+                                <td class="text-center">
+                                    @{
+                                        var statusClass = item.Status == "Paid" ? "bg-success-soft text-success" :
+                                        item.Status == "Cancelled" ? "bg-danger-soft text-danger" :
+                                        "bg-warning-soft text-warning";
+                                    }
+                                    <span class="badge @statusClass px-3 py-2 rounded-pill">@item.Status</span>
+                                </td>
+                                <td class="text-end">
+                                    <div class="dropdown">
+                                        <button class="btn btn-light btn-sm shadow-sm border" type="button" data-bs-toggle="dropdown">
+                                            <i class="fas fa-ellipsis-v"></i>
+                                        </button>
+                                        <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0">
+                                            <li><a class="dropdown-item" asp-action="Details" asp-route-id="@item.InvoiceId"><i class="fas fa-eye me-2 text-info"></i> Details</a></li>
+                                            <li><a class="dropdown-item" asp-action="Edit" asp-route-id="@item.InvoiceId"><i class="fas fa-edit me-2 text-warning"></i> Edit</a></li>
+                                            @if (item.Status != "Cancelled")
+                                            {
+                                                <li>
+                                                    <form asp-action="Cancel" asp-route-id="@item.InvoiceId" method="post" onsubmit="return confirm('Cancel this invoice?');">
+                                                        <button type="submit" class="dropdown-item text-danger"><i class="fas fa-times-circle me-2"></i> Cancel</button>
+                                                    </form>
+                                                </li>
+                                            }
+                                            @if (item.Status == "Pending")
+                                            {
+                                                <li>
+                                                    <form asp-action="Finish" asp-route-id="@item.InvoiceId" method="post" onsubmit="return confirm('Mark as Paid?');">
+                                                        <button type="submit" class="dropdown-item text-success"><i class="fas fa-check-circle me-2"></i> Mark Paid</button>
+                                                    </form>
+                                                </li>
+                                            }
+                                        </ul>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .bg-success-soft {
+        background-color: rgba(25, 135, 84, 0.1);
+    }
+
+    .bg-danger-soft {
+        background-color: rgba(220, 53, 69, 0.1);
+    }
+
+    .bg-warning-soft {
+        background-color: rgba(255, 193, 7, 0.1);
+    }
+</style>
