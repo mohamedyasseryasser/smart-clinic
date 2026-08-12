@@ -117,12 +117,7 @@
                     </li>
                 }
 
-                <li class="@(ViewContext.RouteData.Values["Action"]?.ToString() == "Reports" ? "active" : "")">
-                    <a href="#">
-                        <i class="fas fa-chart-bar"></i>
-                        <span>Reports</span>
-                    </a>
-                </li>
+              
 
                 <li class="@(ViewContext.RouteData.Values["Controller"]?.ToString() == "Auth" && ViewContext.RouteData.Values["Action"]?.ToString() == "ChangePassword" ? "active" : "")">
                     <a asp-controller="Auth" asp-action="ChangePassword">

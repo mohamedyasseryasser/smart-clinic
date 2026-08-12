@@ -11,9 +11,9 @@ using System.Threading.Tasks;
 
 namespace smart_clinic.services.reporesity
 {
-    public class PatientRepo:IPatient
+    public class PatientRepo : IPatient
     {
-        public PatientRepo(Context context,IMapper mapper)
+        public PatientRepo(Context context, IMapper mapper)
         {
             Context = context;
             Mapper = mapper;
@@ -24,7 +24,7 @@ namespace smart_clinic.services.reporesity
         //createpatient
         public async Task<ResponseStatus<ResponsePatientVM>> CreatePatient(AddPatientVM vm)
         {
-            var response=new ResponseStatus<ResponsePatientVM>();
+            var response = new ResponseStatus<ResponsePatientVM>();
             try
             {
                 if (vm.nationalid.HasValue)
@@ -44,16 +44,16 @@ namespace smart_clinic.services.reporesity
                     response.Errors.Add(response.Message);
                     return response;
                 }
-                var patient =Mapper.Map<Patient>(vm);
-                patient.isvalid=true;   
+                var patient = Mapper.Map<Patient>(vm);
+                patient.isvalid = true;
                 await Context.Patients.AddAsync(patient);
                 await Context.SaveChangesAsync();
                 response.Success = true;
                 response.Message = "created patient successfully";
                 response.Data = Mapper.Map<ResponsePatientVM>(patient);
-                 return response;
+                return response;
             }
-            catch (Exception ex) 
+            catch (Exception ex)
             {
                 response.Success = false;
                 response.Message = "wrong";
@@ -64,11 +64,11 @@ namespace smart_clinic.services.reporesity
         //update
         public async Task<ResponseStatus<ResponsePatientVM>> UpdatePatient(UpdatePatientVM vm)
         {
-            var response=new ResponseStatus<ResponsePatientVM>();
+            var response = new ResponseStatus<ResponsePatientVM>();
             try
             {
-                var patient=await Context.Patients.FirstOrDefaultAsync(p=>p.patientid==vm.patientid);
-                if (patient==null)
+                var patient = await Context.Patients.FirstOrDefaultAsync(p => p.patientid == vm.patientid);
+                if (patient == null)
                 {
                     response.Success = false;
                     response.Message = "not found";
@@ -77,7 +77,7 @@ namespace smart_clinic.services.reporesity
                 }
                 if (vm.nationalid.HasValue)
                 {
-                    if (vm.nationalid.Value != patient.nationalid.Value &&await exitnationalid(vm.nationalid.Value))
+                    if (vm.nationalid.Value != patient.nationalid.Value && await exitnationalid(vm.nationalid.Value))
                     {
                         response.Success = false;
                         response.Message = "this nationalid is already exit";
@@ -93,14 +93,14 @@ namespace smart_clinic.services.reporesity
                     return response;
                 }
                 patient.datebirth = vm.datebirth;
-                patient.phonenumber=vm.phonenumber;
+                patient.phonenumber = vm.phonenumber;
                 patient.patientname = vm.patientname;
                 patient.Gender = vm.Gender;
                 patient.isvalid = vm.isvalid;
                 patient.nationalid = vm.nationalid;
                 await Context.SaveChangesAsync();
-                response.Success=true;
-                response.Data=Mapper.Map<ResponsePatientVM>(vm);
+                response.Success = true;
+                response.Data = Mapper.Map<ResponsePatientVM>(vm);
                 return response;
             }
             catch (Exception ex)
@@ -118,7 +118,7 @@ namespace smart_clinic.services.reporesity
 
             try
             {
-                var patient =await Context.Patients.FirstOrDefaultAsync(p => p.patientid == id);
+                var patient = await Context.Patients.FirstOrDefaultAsync(p => p.patientid == id);
                 if (patient == null)
                 {
                     response.Success = false;
@@ -129,11 +129,11 @@ namespace smart_clinic.services.reporesity
                 }
                 patient.isvalid = false;
                 await Context.SaveChangesAsync();
-                response.Success=true;
+                response.Success = true;
                 response.Data = true;
                 return response;
             }
-            catch (Exception ex) 
+            catch (Exception ex)
             {
                 response.Success = false;
                 response.Message = "not found";
@@ -145,23 +145,23 @@ namespace smart_clinic.services.reporesity
         //getpatientbyphonenumber
         public async Task<ResponseStatus<ResponsePatientVM>> getpatientbyphonenumber(string phone)
         {
-            var response=new ResponseStatus<ResponsePatientVM>();
+            var response = new ResponseStatus<ResponsePatientVM>();
             try
             {
                 var patient = await Context.Patients.
-                    FirstOrDefaultAsync(p=>p.phonenumber.ToLower()==phone.ToLower());
-                if (patient==null)
+                    FirstOrDefaultAsync(p => p.phonenumber.ToLower() == phone.ToLower());
+                if (patient == null)
                 {
                     response.Success = false;
                     response.Message = "not found";
                     response.Errors.Add(response.Message);
-                     return response;
+                    return response;
                 }
                 response.Success = true;
                 response.Data = Mapper.Map<ResponsePatientVM>(patient); ;
                 return response;
             }
-            catch (Exception ex) 
+            catch (Exception ex)
             {
                 response.Success = false;
                 response.Message = "exit wrong";
@@ -224,8 +224,8 @@ namespace smart_clinic.services.reporesity
             }
         }
         //getall
-        public async Task<ResponseStatus<IEnumerable<ResponsePatientVM>>> GetAllAsync(pagination pg, 
-            string? patientname=null,string? phone=null,long? nationalid=null,bool? isactive=null)
+        public async Task<ResponseStatus<IEnumerable<ResponsePatientVM>>> GetAllAsync(pagination pg,
+            string? patientname = null, string? phone = null, long? nationalid = null, bool? isactive = null)
         {
             var response = new ResponseStatus<IEnumerable<ResponsePatientVM>>();
             try
@@ -233,20 +233,20 @@ namespace smart_clinic.services.reporesity
                 IQueryable<Patient> query = Context.Patients.AsNoTracking();
                 if (!string.IsNullOrEmpty(patientname))
                 {
-                    query = query.Where(p=>p.patientname.ToLower().Contains(patientname.ToLower()));
+                    query = query.Where(p => p.patientname.ToLower().Contains(patientname.ToLower()));
                 }
                 if (!string.IsNullOrEmpty(phone))
                 {
                     query = query.Where(p => p.phonenumber.ToLower().Contains(phone.ToLower()));
 
                 }
-                if (nationalid.HasValue&&nationalid!=null)
+                if (nationalid.HasValue && nationalid != null)
                 {
-                    query = query.Where(p => p.nationalid==nationalid);
+                    query = query.Where(p => p.nationalid == nationalid);
                 }
-                if (isactive.HasValue&&isactive!=null)
+                if (isactive.HasValue && isactive != null)
                 {
-                    query = query.Where(p => p.isvalid.ToString().ToLower()==isactive.ToString().ToLower());
+                    query = query.Where(p => p.isvalid.ToString().ToLower() == isactive.ToString().ToLower());
                 }
 
                 var totalCount = await query.CountAsync();
@@ -294,6 +294,18 @@ namespace smart_clinic.services.reporesity
 
                 var vm = Mapper.Map<ResponsePatientVM>(patient);
 
+                // Load invoices directly through the appointment/visit relationship so every
+                // invoice generated for one of this patient's bookings appears in the profile.
+                var patientInvoices = await Context.Invoices
+                    .AsNoTracking()
+                    .Include(i => i.Visit)
+                        .ThenInclude(v => v.Appoinment)
+                    .Where(i => i.Visit != null
+                        && i.Visit.Appoinment != null
+                        && i.Visit.Appoinment.patientid == id)
+                    .OrderByDescending(i => i.CreatedAt)
+                    .ToListAsync();
+
                 // Manual mapping for nested data to ensure clarity
                 vm.Appointments = patient.appoinments.Select(a => new AppointmentResponseVM
                 {
@@ -323,12 +335,12 @@ namespace smart_clinic.services.reporesity
                     Medicines = a.Visit.Prescription.items.Select(i => i.Medicine?.Name).ToList()
                 }).ToList();
 
-                vm.Invoices = patient.appoinments.Where(a => a.Visit?.Invoice != null).Select(a => new InvoiceResponseVM
+                vm.Invoices = patientInvoices.Select(invoice => new InvoiceResponseVM
                 {
-                    InvoiceId = a.Visit.Invoice.InvoiceId,
-                    FinalAmount = a.Visit.Invoice.FinalAmount,
-                    CreatedAt = a.Visit.Invoice.CreatedAt,
-                    Status = a.Visit.Invoice.Status
+                    InvoiceId = invoice.InvoiceId,
+                    FinalAmount = invoice.FinalAmount,
+                    CreatedAt = invoice.CreatedAt,
+                    Status = invoice.Status
                 }).ToList();
 
                 response.Success = true;
