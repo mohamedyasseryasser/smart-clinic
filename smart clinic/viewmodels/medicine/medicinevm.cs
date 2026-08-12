@@ -31,8 +31,8 @@ namespace smart_clinic.viewmodels.medicine
 
         [Required(ErrorMessage = "Please select a category")]
         public int cat_id { get; set; }
-        public string? user_id {  get; set; }
-        public IEnumerable<SelectListItem>? Categories { get; set; }=new List<SelectListItem>();
+        public string? user_id { get; set; }
+        public IEnumerable<SelectListItem>? Categories { get; set; } = new List<SelectListItem>();
     }
 
     public class UpdateMedicineVM : AddMedicineVM
@@ -40,10 +40,9 @@ namespace smart_clinic.viewmodels.medicine
         [Required]
         public int medicineId { get; set; }
         [Required(ErrorMessage = "Please select a category")]
-       
-        public bool IsDeleted { get; set; }
+        public bool IsActive { get; set; }
 
-      }
+    }
 
     public class ResponseMedicineVM
     {
@@ -60,7 +59,7 @@ namespace smart_clinic.viewmodels.medicine
         public DateTime ExpiryDate { get; set; }
         public int cat_id { get; set; }
         public string CategoryName { get; set; }
-        public string AddedBy {  get; set; }
+        public string AddedBy { get; set; }
         public string user_id { get; set; }
 
     }

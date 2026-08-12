@@ -38,7 +38,8 @@ namespace smart_clinic.services.reporesity
                 {
                     query = query.Where(m => m.cat_id == categoryId.Value);
                 }
-                if (isdeleted.HasValue && isdeleted != null)
+                // When no status is selected, keep both active and inactive medicines visible.
+                if (isdeleted.HasValue)
                 {
                     query = query.Where(m => m.IsDeleted == isdeleted.Value);
                 }
@@ -144,8 +145,32 @@ namespace smart_clinic.services.reporesity
                     response.Message = "Medicine not found";
                     return response;
                 }
-                existing.user_id = vm.user_id;
-                _mapper.Map(vm, existing);
+
+                var category = await _context.categories
+                    .FirstOrDefaultAsync(c => c.cat_id == vm.cat_id && c.isactive);
+                if (category == null)
+                {
+                    response.Success = false;
+                    response.Message = "This category is not found or inactive";
+                    return response;
+                }
+                 
+                existing.Name = vm.Name;
+                existing.StockQuantity = vm.StockQuantity;
+                existing.SupplierName = vm.SupplierName;
+                existing.UnitPrice = vm.UnitPrice;
+                existing.RecordLevel = vm.RecordLevel;
+                existing.ExpiryDate = vm.ExpiryDate;
+                existing.cat_id = vm.cat_id;
+                existing.CategoryName = category.cat_name;
+            
+                existing.IsDeleted = !vm.IsActive;
+            
+                if (!string.IsNullOrWhiteSpace(vm.user_id))
+                {
+                    existing.user_id = vm.user_id;
+                }
+
                 await _context.SaveChangesAsync();
 
                 response.Data = _mapper.Map<ResponseMedicineVM>(existing);
@@ -215,17 +240,17 @@ namespace smart_clinic.services.reporesity
             var response = new ResponseStatus<IEnumerable<ResponseMedicineVM>>();
             try
             {
-                IQueryable<Medicine> query= _context.Medicines.
-                    Include(m=>m.category)
-                    .Where(m=>m.IsDeleted!=true&&m.category.isactive==true);
-                if (query==null)
+                IQueryable<Medicine> query = _context.Medicines.
+                    Include(m => m.category)
+                    .Where(m => m.IsDeleted != true && m.category.isactive == true);
+                if (query == null)
                 {
-                    response.Success=false;
+                    response.Success = false;
                     response.Message = "not found medicine";
                     response.Errors.Add(response.Message);
                     return response;
                 }
-                var medicines =await  query.ToListAsync();
+                var medicines = await query.ToListAsync();
                 response.Success = true;
                 response.Data = _mapper.Map<IEnumerable<ResponseMedicineVM>>(medicines);
                 return response;

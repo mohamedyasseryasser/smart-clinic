@@ -21,7 +21,7 @@ namespace smart_clinic.Controllers
         private readonly IUser userservice;
         private readonly ILogger<MedicineController> logger;
 
-        public MedicineController(IMedicine medicineRepo, ICategory categoryRepo, IUser userservice,ILogger<MedicineController> logger)
+        public MedicineController(IMedicine medicineRepo, ICategory categoryRepo, IUser userservice, ILogger<MedicineController> logger)
         {
             _medicineRepo = medicineRepo;
             _categoryRepo = categoryRepo;
@@ -66,7 +66,7 @@ namespace smart_clinic.Controllers
             ViewBag.CategoryId = cat_id;
             ViewBag.PageNumber = pageNumber;
             ViewBag.PageSize = pageSize;
-            ViewBag.isdaleted = isdeleted;
+            ViewBag.isdeleted = isdeleted;
             // Load categories for the filter dropdown
             var categories = await _categoryRepo.getcategoryactive();
             ViewBag.Categories = new SelectList(categories.Data, "cat_id", "cat_name", cat_id);
@@ -150,8 +150,8 @@ namespace smart_clinic.Controllers
                 Name = result.Data.Name,
                 StockQuantity = result.Data.StockQuantity,
                 SupplierName = result.Data.SupplierName,
-                IsDeleted = result.Data.IsDeleted,  
-                user_id=user.Data,
+                IsActive = !result.Data.IsDeleted,
+                user_id = user.Data,
                 UnitPrice = result.Data.UnitPrice,
                 RecordLevel = result.Data.RecordLevel,
                 ExpiryDate = result.Data.ExpiryDate,
@@ -168,7 +168,7 @@ namespace smart_clinic.Controllers
         {
             if (!ModelState.IsValid)
             {
-              await  LoadCategories(vm);
+                await LoadCategories(vm);
                 return View(vm);
             }
 
@@ -180,7 +180,7 @@ namespace smart_clinic.Controllers
             }
 
             ModelState.AddModelError(string.Empty, result.Message);
-        await    LoadCategories(vm);
+            await LoadCategories(vm);
             return View(vm);
         }
 
@@ -191,11 +191,11 @@ namespace smart_clinic.Controllers
             var result = await _medicineRepo.DeleteAsync(id);
             if (result.Success)
             {
-                logger.LogInformation( "Medicine deleted successfully");
+                logger.LogInformation("Medicine deleted successfully");
             }
             else
             {
-                logger.LogWarning( result.Message);
+                logger.LogWarning(result.Message);
             }
             return RedirectToAction(nameof(Index));
         }
@@ -210,4 +210,4 @@ namespace smart_clinic.Controllers
             }).ToList();
         }
     }
-    }
+}
