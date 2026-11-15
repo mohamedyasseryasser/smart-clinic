@@ -1,84 +1,226 @@
- # Smart Clinic Management System
 
-## Overview
+# Smart Clinic Management System
 
-This project is a comprehensive and scalable Management System designed to streamline clinic operations and enhance patient care. It provides a robust set of features for managing patient records, appointments, medical prescriptions, and invoicing, serving as a powerful platform for healthcare providers to manage their daily workflows efficiently.
+A web-based clinic management application developed using **ASP.NET Core MVC** and **SQL Server** to organize and manage daily clinic operations. The system provides an integrated solution for managing patients, appointments, medical visits, prescriptions, medications, departments, doctors, users, and invoices.
 
 ## Features
 
-*   **User Authentication & Authorization:** Secure user registration, login, and role-based access control (Admin, Doctor, Receptionist) using ASP.NET Core Identity.
-*   **Patient Management:** Comprehensive CRUD operations for patient profiles, including personal details and medical history.
-*   **Appointment Scheduling:** Efficiently manage patient appointments with search, create, update, and status tracking functionalities.
-*   **Medical Prescriptions:** Generate and manage digital prescriptions linked to a comprehensive medicine database.
-*   **Invoice & Billing:** Create and manage invoices for medical services and prescriptions, facilitating streamlined financial tracking.
-*   **Visit Tracking:** Document and track every patient visit, ensuring a detailed chronological medical record.
-*   **Department & Doctor Management:** Organize clinic structure by departments and manage professional profiles for medical staff.
-*   **Dashboard Analytics:** Interactive dashboard providing a high-level overview of clinic activities and key metrics.
+### 1. Authentication & User Management
+- User authentication and account management using ASP.NET Core Identity.
+- Role-based access control for Admin, Doctor, and Receptionist.
+- Manage user accounts and professional profiles.
+- Organize clinic staff information.
 
-## Architecture & Design Principles
+### 2. Patient Management
+- Add, update, and manage patient records.
+- Search and filter patient information.
+- Maintain centralized patient medical records.
 
-This system is built with a focus on maintainability, scalability, and performance, adhering to modern software engineering practices:
+### 3. Appointment Management
+- Schedule new patient appointments.
+- View, search, and filter appointments.
+- Update appointment statuses.
+- Confirm patient arrivals.
+- Cancel appointments.
 
-*   **MVC Pattern:** Implemented using the Model-View-Controller architecture to ensure a clean separation of concerns.
-*   **Repository Pattern:** Utilized to abstract data access logic, ensuring a clean separation between business logic and data persistence. This enhances testability and allows for easier database changes.
-*   **Dependency Injection:** Extensively used to manage service dependencies, promoting modularity and flexibility across the application.
-*   **View Models (VMs):** Used to shape and validate data sent to and received from views, protecting internal domain models and optimizing data transfer.
-*   **Identity Security:** Provides a secure, cookie-based authentication mechanism for managing user sessions and roles.
-*   **Error Handling:** Centralized exception handling to provide consistent and meaningful error responses throughout the application.
+### 4. Medical Visit Management
+- Create and manage patient visits.
+- Link medical visits to patients and appointments.
+- Maintain organized visit records.
 
-## Technologies Used
+### 5. Medication Management
+- Add and manage medications.
+- Organize medications into medical categories.
+- Maintain medication information.
 
-*   **Backend:**
-    *   C#
-    *   ASP.NET Core MVC
-    *   Entity Framework Core (ORM)
-    *   SQL Server (Database)
-    *   LINQ (Language Integrated Query)
-    *   ASP.NET Core Identity (User Management)
-    *   AutoMapper (Object-to-Object Mapping)
-*   **Frontend:**
-    *   HTML5 & CSS3
-    *   JavaScript & jQuery
-    *   Bootstrap (Responsive UI Framework)
+### 6. Prescription Management
+- Create prescriptions for patient visits.
+- Add multiple medications to prescriptions.
+- Link prescription items to their corresponding medications.
+- Manage prescription records.
 
-## Getting Started
+### 7. Invoice & Billing Management
+- Generate invoices for medical visits.
+- Update and track invoice statuses.
+- Associate invoices with their corresponding visits.
 
-To get the Smart Clinic Management System up and running on your local machine for development and testing purposes, follow these steps:
+### 8. Department & Doctor Management
+- Manage clinic departments.
+- Organize doctor information and professional profiles.
+- Associate doctors with clinic departments.
 
-### Prerequisites
+### 9. Dashboard
+- Display selected clinic activity indicators.
+- Provide an overview of clinic operations.
 
-*   .NET SDK (version 6.0 or higher)
-*   SQL Server (or SQL Server Express)
-*   Visual Studio (or Visual Studio Code with C# extension)
+### 10. Additional Features
+- Server-side data validation using ViewModels.
+- Pagination for supported data lists.
+- Object mapping using AutoMapper.
+- Database relationships managed through Entity Framework Core.
+- Repository Pattern for organizing data access.
 
-### Installation
+## Architecture
 
-1.  **Clone the repository:**
-    ```bash
-    git clone https://github.com/YOUR_USERNAME/SmartClinic.git
-    cd SmartClinic
-    ```
-2.  **Configure Database:**
-    *   Open `appsettings.json` in the `smart clinic` project.
-    *   Update the `DefaultConnection` connection string to point to your local SQL Server instance.
-    *   Run database migrations:
-        ```bash
-        dotnet ef database update
-        ```
-3.  **Run the application:**
-    ```bash
-    dotnet run
-    ```
-    The application will typically run on `https://localhost:5001` (or a similar port).
+The application follows the **ASP.NET Core MVC** architectural pattern with a Repository layer to separate application responsibilities and data access.
 
-## Contributing
+### Application Workflow
 
-Feel free to fork the repository, create a new branch, and submit pull requests. Any contributions are welcome!
+```text
+User / Browser
+      |
+      v
+  Controllers
+      |
+      v
+ ViewModels
+      |
+      v
+  Razor Views
+      |
+      v
+Repository Interfaces
+      |
+      v
+Repository Implementations
+      |
+      v
+Entity Framework Core
+      |
+      v
+   SQL Server
+```
 
-## License
+### Project Structure
 
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details.
+```text
+smart clinic/
+│
+├── Controllers/
+├── Models/
+├── Views/
+├── Migrations/
+├── repo/
+├── viewmodels/
+├── mapping/
+├── enums/
+│
+├── Program.cs
+└── smart clinic.PL.csproj
+```
 
-## Contact
+### Architecture Components
 
-Mohamed Yasser Draz - mohamedyasseryasser7@gmail.com - [https://www.linkedin.com/in/mohamed-yasser-yasser-2795a2273](https://www.linkedin.com/in/mohamed-yasser-yasser-2795a2273)
+- **Controllers:** Handle incoming requests and coordinate application operations.
+- **Models:** Represent application entities such as Patient, Appointment, Visit, Prescription, and Invoice.
+- **Views:** Provide the user interface using ASP.NET Core Razor Views.
+- **ViewModels:** Separate data presentation and input models from database entities.
+- **Repositories:** Encapsulate data access logic using repository interfaces and implementations.
+- **AutoMapper:** Handles mapping between entities and ViewModels.
+- **DbContext:** Manages database entities and relationships using Entity Framework Core.
+- **Dependency Injection:** Registers application services, repositories, database context, Identity, and AutoMapper.
+
+## Technologies & Tools
+
+| Category | Technologies |
+|---|---|
+| Programming Language | C# |
+| Backend Framework | ASP.NET Core MVC (.NET 8) |
+| Frontend | Razor Views, HTML, CSS, JavaScript |
+| Database | SQL Server |
+| ORM | Entity Framework Core |
+| Authentication | ASP.NET Core Identity |
+| Object Mapping | AutoMapper |
+| Architecture | MVC, Repository Pattern |
+| Database Management | EF Core Migrations |
+
+## Prerequisites
+
+Before running the application, make sure you have installed:
+
+- .NET 8 SDK
+- SQL Server (Express or Developer Edition)
+- Entity Framework Core CLI (dotnet-ef)
+
+## Installation & Setup
+
+### 1. Clone the Repository
+
+```bash
+git clone <YOUR_REPOSITORY_URL>
+```
+
+### 2. Navigate to the Project Directory
+
+```bash
+cd "smart clinic/smart clinic"
+```
+
+### 3. Configure the Database Connection
+
+Initialize User Secrets:
+
+```bash
+dotnet user-secrets init
+```
+
+Set your SQL Server connection string:
+
+```bash
+dotnet user-secrets set "ConnectionStrings:DefaultConnection" "<YOUR_CONNECTION_STRING>"
+```
+
+### 4. Restore Dependencies
+
+```bash
+dotnet restore
+```
+
+### 5. Apply Database Migrations
+
+```bash
+dotnet ef database update
+```
+
+### 6. Run the Application
+
+```bash
+dotnet run --launch-profile http
+```
+
+The application will be available at:
+
+```text
+http://localhost:5219
+```
+
+## Database Configuration
+
+The application uses SQL Server as its database and Entity Framework Core for database operations.
+
+- **Connection String:** `ConnectionStrings:DefaultConnection`
+- **Migrations Directory:** `Migrations/`
+- **Database Updates:** Managed through Entity Framework Core CLI.
+
+## Security Considerations
+
+- Database credentials should be stored using User Secrets during development.
+- Production credentials should be managed through environment variables or a secure secret manager.
+- Authentication and authorization middleware must be configured correctly.
+- Role-based authorization should be applied to protected controllers and actions.
+
+## Future Improvements
+
+- Add automated unit and integration tests.
+- Improve dashboard analytics and reporting.
+- Introduce advanced search and filtering capabilities.
+- Enhance application security and authorization policies.
+- Add appointment notification functionality.
+
+## Project Status
+
+Developed as a practical web application demonstrating ASP.NET Core MVC development, database management, authentication, repository-based data access, and real-world clinic workflow organization.
+
+---
+
+**Built with ASP.NET Core MVC, Entity Framework Core, and SQL Server.**
