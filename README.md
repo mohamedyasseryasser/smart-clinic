@@ -61,41 +61,41 @@ A web-based clinic management application developed using **ASP.NET Core MVC** a
 
 ## Screenshots
 
-### 1. Dashboard
-![Dashboard](docs/images/Screenshot%202026-11-16%20145118.png)
+### 1. Login
+![Login](docs/images/Screenshot%202026-11-16%20145118.png)
 
-### 2. Screenshot 2
-![Screenshot 2](docs/images/Screenshot%202026-11-16%20145133.png)
+### 2. Dashboard
+![Dashboard](docs/images/Screenshot%202026-11-16%20145133.png)
 
-### 3. Screenshot 3
-![Screenshot 3](docs/images/Screenshot%202026-11-16%20145139.png)
+### 3. Doctors
+![Doctors](docs/images/Screenshot%202026-11-16%20145139.png)
 
-### 4. Screenshot 4
-![Screenshot 4](docs/images/Screenshot%202026-11-16%20145317.png)
+### 4. Create Appointment
+![Create Appointment](docs/images/Screenshot%202026-11-16%20145317.png)
 
-### 5. Screenshot 5
-![Screenshot 5](docs/images/Screenshot%202026-11-16%20145345.png)
+### 5. Appointment Details
+![Appointment Details](docs/images/Screenshot%202026-11-16%20145345.png)
 
-### 6. Screenshot 6
-![Screenshot 6](docs/images/Screenshot%202026-11-16%20145350.png)
+### 6. Confirm Appointment
+![Confirm Appointment](docs/images/Screenshot%202026-11-16%20145350.png)
 
-### 7. Screenshot 7
-![Screenshot 7](docs/images/Screenshot%202026-11-16%20145357.png)
+### 7. Start Visit
+![Start Visit](docs/images/Screenshot%202026-11-16%20145357.png)
 
-### 8. Screenshot 8
-![Screenshot 8](docs/images/Screenshot%202026-11-16%20145422.png)
+### 8. Complete Visit
+![Complete Visit](docs/images/Screenshot%202026-11-16%20145422.png)
 
-### 9. Screenshot 9
-![Screenshot 9](docs/images/Screenshot%202026-11-16%20145436.png)
+### 9. Create Medical Prescription
+![Create Medical Prescription](docs/images/Screenshot%202026-11-16%20145436.png)
 
-### 10. Screenshot 10
-![Screenshot 10](docs/images/Screenshot%202026-11-16%20145454.png)
+### 10. Visit Details
+![Visit Details](docs/images/Screenshot%202026-11-16%20145454.png)
 
-### 11. Screenshot 11
-![Screenshot 11](docs/images/Screenshot%202026-11-16%20145507.png)
+### 11. Create Invoice
+![Create Invoice](docs/images/Screenshot%202026-11-16%20145507.png)
 
-### 12. Screenshot 12
-![Screenshot 12](docs/images/Screenshot%202026-11-16%20145529.png)
+### 12. Invoices
+![Invoices](docs/images/Screenshot%202026-11-16%20145529.png)
 
 ## Architecture
 
