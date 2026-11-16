@@ -12,8 +12,8 @@ using smart_clinic.Models;
 namespace smart_clinic.Migrations
 {
     [DbContext(typeof(Context))]
-    [Migration("20260720194349_init7778")]
-    partial class init7778
+    [Migration("20260824063202_init2")]
+    partial class init2
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

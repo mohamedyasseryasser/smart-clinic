@@ -17,23 +17,23 @@ namespace smart_clinic
             // 🔗 Connection String (SQL Server)
             builder.Services.AddDbContext<Context>(options =>
            options.UseSqlServer(
-               builder.Configuration.GetConnectionString("DefaultConnection")  
-           ).LogTo(Console.WriteLine,LogLevel.Information)
+               builder.Configuration.GetConnectionString("DefaultConnection")
+           ).LogTo(Console.WriteLine, LogLevel.Information)
        );
             // 🔐 Identity Setup
             builder.Services.AddIdentity<Aplicationuser, IdentityRole>()
                 .AddEntityFrameworkStores<Context>()
                 .AddDefaultTokenProviders();
             // Add services to the container.
-            builder.Services.AddScoped<IUser,User>();
-            builder.Services.AddScoped<IAuth,Auth>();
-            builder.Services.AddScoped<IDepartment,DepartmentRepo>();
+            builder.Services.AddScoped<IUser, User>();
+            builder.Services.AddScoped<IAuth, Auth>();
+            builder.Services.AddScoped<IDepartment, DepartmentRepo>();
             builder.Services.AddScoped<IPatient, PatientRepo>();
-            builder.Services.AddScoped<IAppoinment,AppoinmentRepo>();
-            builder.Services.AddScoped<IVisit,VisitRepo>();
-            builder.Services.AddScoped<IMedicine,medicinerepo>();
-            builder.Services.AddScoped<IPrescription,PrescriptionRepo>();
-            builder.Services.AddScoped<ICategory,CategoryRepo>();
+            builder.Services.AddScoped<IAppoinment, AppoinmentRepo>();
+            builder.Services.AddScoped<IVisit, VisitRepo>();
+            builder.Services.AddScoped<IMedicine, medicinerepo>();
+            builder.Services.AddScoped<IPrescription, PrescriptionRepo>();
+            builder.Services.AddScoped<ICategory, CategoryRepo>();
             builder.Services.AddScoped<IInvoice, InvoiceRepo>();
 
             builder.Services.AddControllersWithViews();
@@ -62,9 +62,10 @@ namespace smart_clinic
                 app.UseExceptionHandler("/Home/Error");
             }
             app.UseStaticFiles();
-            
+
             app.UseRouting();
- 
+
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.MapControllerRoute(

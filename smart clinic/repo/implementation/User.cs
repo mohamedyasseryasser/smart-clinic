@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace smart_clinic.services.reporesity
 {
-    public class User:IUser
+    public class User : IUser
     {
         public User(Context context,
             UserManager<Aplicationuser> userManager,
@@ -25,23 +25,23 @@ namespace smart_clinic.services.reporesity
             UserManager = userManager;
             Mapper = mapper;
             SignInManager = signInManager;
-         }
+        }
         public Context Context { get; }
         public UserManager<Aplicationuser> UserManager { get; }
         public IMapper Mapper { get; }
         public SignInManager<Aplicationuser> SignInManager { get; }
- 
+
         //create admin
         public async Task<ResponseStatus<responseadminviewmodel>> addadmin(adminviewmodel vm)
         {
             using var transaction = await Context.Database.BeginTransactionAsync();
             try
             {
-                Admin admin=new Admin();
+                Admin admin = new Admin();
                 ResponseStatus<responseadminviewmodel> response = new ResponseStatus<responseadminviewmodel>();
                 //check already email exit or not
                 bool checkresult = await emailexit(vm.Email);
-                if (checkresult) 
+                if (checkresult)
                 {
                     response.Success = false;
                     response.Message = "this email is already exit";
@@ -49,26 +49,26 @@ namespace smart_clinic.services.reporesity
                     return response;
                 }
                 //create user
-                var user= Mapper.Map<Aplicationuser>(vm);
-                user.IsActive=true; 
-                var result =await UserManager.CreateAsync(user,vm.Password);
+                var user = Mapper.Map<Aplicationuser>(vm);
+                user.IsActive = true;
+                var result = await UserManager.CreateAsync(user, vm.Password);
                 if (!result.Succeeded)
                 {
                     response.Success = false;
                     response.Message = "create user is not successed";
-                    response.Errors.AddRange(result.Errors.Select(e=>e.Description));
+                    response.Errors.AddRange(result.Errors.Select(e => e.Description));
                     return response;
                 }
                 else if (result.Succeeded)
                 {
                     //add admin
-                     admin =Mapper.Map<Admin>(vm);
+                    admin = Mapper.Map<Admin>(vm);
                     admin.userid = user.Id;
-                     admin.status = userstatus.active;
+                    admin.status = userstatus.active;
                     await Context.Admins.AddAsync(admin);
                 }
                 //create cookie
-                var roleResult=await UserManager.AddToRoleAsync(user, "Admin");
+                var roleResult = await UserManager.AddToRoleAsync(user, "Admin");
                 if (!roleResult.Succeeded)
                 {
                     response.Success = false;
@@ -78,11 +78,11 @@ namespace smart_clinic.services.reporesity
                 }
                 await Context.SaveChangesAsync();
                 await transaction.CommitAsync();
-                 var dataresponse = Mapper.Map<responseadminviewmodel>(admin);
+                var dataresponse = Mapper.Map<responseadminviewmodel>(admin);
                 response.Data = dataresponse;
                 return response;
             }
-            catch (Exception ex) 
+            catch (Exception ex)
             {
                 await transaction.RollbackAsync();
                 throw;
@@ -115,7 +115,7 @@ namespace smart_clinic.services.reporesity
                 }
 
                 //update user
-                updateuser(vm,user);
+                updateuser(vm, user);
                 //update admin
                 if (!string.IsNullOrEmpty(vm.permissions)) admin.permissions = vm.permissions;
                 admin.status = userstatus.modeficated;
@@ -167,14 +167,14 @@ namespace smart_clinic.services.reporesity
         }
 
         // get all admins with pagination
-        public async Task<ResponseStatus<IEnumerable<responseadminviewmodel>>> getalladmins( pagination pg , string searchterm = null )
+        public async Task<ResponseStatus<IEnumerable<responseadminviewmodel>>> getalladmins(pagination pg, string searchterm = null)
         {
             var response = new ResponseStatus<IEnumerable<responseadminviewmodel>>();
             try
             {
                 IQueryable<Admin> query = Context.Admins.Include(a => a.user);
 
- 
+
 
                 if (!string.IsNullOrEmpty(searchterm))
                 {
@@ -183,8 +183,8 @@ namespace smart_clinic.services.reporesity
                         t.permissions.ToLower().Contains(searchterm) ||
                         t.user.address.ToLower().Contains(searchterm) ||
                         t.user.Email.ToLower() == searchterm ||
-                        t.user.PhoneNumber == searchterm||
-                        t.user.IsActive.ToString().ToLower()==searchterm||t.status.ToString().ToLower().Contains(searchterm));
+                        t.user.PhoneNumber == searchterm ||
+                        t.user.IsActive.ToString().ToLower() == searchterm || t.status.ToString().ToLower().Contains(searchterm));
                 }
 
                 query = query.OrderByDescending(t => t.user.createdat)
@@ -212,7 +212,7 @@ namespace smart_clinic.services.reporesity
             {
                 IQueryable<Admin> query = Context.Admins.
                     Include(a => a.user)
-                    .Where(a=>a.status!=userstatus.inactive&&a.user.IsActive==true);
+                    .Where(a => a.status != userstatus.inactive && a.user.IsActive == true);
 
                 var admins = await query.ToListAsync();
                 response.Data = Mapper.Map<IEnumerable<responseadminviewmodel>>(admins);
@@ -291,7 +291,7 @@ namespace smart_clinic.services.reporesity
             try
             {
                 var admin = await Context.Admins.Include(a => a.user)
-                    .FirstOrDefaultAsync(a => a.userid == userid && a.status!=userstatus.inactive);
+                    .FirstOrDefaultAsync(a => a.userid == userid && a.status != userstatus.inactive);
 
                 if (admin == null)
                 {
@@ -386,7 +386,7 @@ namespace smart_clinic.services.reporesity
 
                 await Context.SaveChangesAsync();
                 await transaction.CommitAsync();
- 
+
                 response.Data = Mapper.Map<doctorresponseviewmodel>(doctor);
                 response.Message = "doctor created successfully";
                 return response;
@@ -405,12 +405,12 @@ namespace smart_clinic.services.reporesity
         {
             using var transaction = await Context.Database.BeginTransactionAsync();
 
-            var response =new ResponseStatus<doctorresponseviewmodel>(); 
+            var response = new ResponseStatus<doctorresponseviewmodel>();
             try
             {
                 //check user
                 var user = await Context.Users.FindAsync(vm.userid);
-                if (user == null) 
+                if (user == null)
                 {
                     response.Success = false;
                     response.Message = $"this user:{vm.userid} is not found";
@@ -419,20 +419,20 @@ namespace smart_clinic.services.reporesity
                 }
                 //check doctor is exit or not
                 var doctor = await Context.Doctors.
-                    Include(d=>d.Department)
-                    .Include(d=>d.user).
-                    FirstOrDefaultAsync(d=>d.DoctorId==vm.DoctorId&&d.userid==vm.userid);
-                if (doctor == null) 
+                    Include(d => d.Department)
+                    .Include(d => d.user).
+                    FirstOrDefaultAsync(d => d.DoctorId == vm.DoctorId && d.userid == vm.userid);
+                if (doctor == null)
                 {
-                   response.Success=false;
+                    response.Success = false;
                     response.Message = $"this doctor:{vm.DoctorId} is not found";
                     response.Errors.Add(response.Message);
                     return response;
                 }
                 //update user 
-                updateuser(vm,user);
+                updateuser(vm, user);
                 //update doctor
-                var dept = await Context.Departments.FirstOrDefaultAsync(d=>d.DepartmentId==vm.DepartmentId);
+                var dept = await Context.Departments.FirstOrDefaultAsync(d => d.DepartmentId == vm.DepartmentId);
                 if (dept == null)
                 {
                     response.Success = false;
@@ -448,7 +448,7 @@ namespace smart_clinic.services.reporesity
                 //save in database
                 await Context.SaveChangesAsync();
                 await transaction.CommitAsync();
-               response.Success = true;
+                response.Success = true;
                 response.Data = Mapper.Map<doctorresponseviewmodel>(doctor);
                 return response;
             }
@@ -469,17 +469,17 @@ namespace smart_clinic.services.reporesity
             {
                 //check doctor
                 var doctor = await Context.Doctors
-                    .Include(d=>d.user)
-                    .FirstOrDefaultAsync(d=>d.DoctorId==doctorid);
-                if (doctor==null)
+                    .Include(d => d.user)
+                    .FirstOrDefaultAsync(d => d.DoctorId == doctorid);
+                if (doctor == null)
                 {
                     response.Success = false;
                     response.Message = "doctor is not found";
                     response.Errors.Add(response.Message);
                     return response;
                 }
-                response.Success= true;
-                response.Data=Mapper.Map<doctorresponseviewmodel>(doctor);
+                response.Success = true;
+                response.Data = Mapper.Map<doctorresponseviewmodel>(doctor);
                 return response;
             }
             catch (Exception ex)
@@ -496,21 +496,21 @@ namespace smart_clinic.services.reporesity
             var response = new ResponseStatus<IEnumerable<doctorresponseviewmodel>>();
             try
             {
-               
+
                 IQueryable<Doctor> query = Context.Doctors.
                     Include(a => a.user).
-                    Include(a=>a.Department);
-                 if (!string.IsNullOrEmpty(searchterm))
+                    Include(a => a.Department);
+                if (!string.IsNullOrEmpty(searchterm))
                 {
                     searchterm = searchterm.ToLower();
                     query = query.Where(t => t.user.UserName.ToLower().Contains(searchterm) ||
                         t.Specialization.ToLower().Contains(searchterm) ||
                         t.user.address.ToLower().Contains(searchterm) ||
                         t.user.Email.ToLower() == searchterm ||
-                        t.user.PhoneNumber == searchterm||
-                        t.Department.Name.ToLower().Contains(searchterm)||
+                        t.user.PhoneNumber == searchterm ||
+                        t.Department.Name.ToLower().Contains(searchterm) ||
                         t.status.ToString().ToLower().Contains(searchterm)
-                        ||t.user.IsActive.ToString().ToLower()==searchterm 
+                        || t.user.IsActive.ToString().ToLower() == searchterm
                         );
                 }
 
@@ -519,7 +519,7 @@ namespace smart_clinic.services.reporesity
                              .Take(pg.PageSize);
 
                 var doctors = await query.ToListAsync();
- 
+
                 response.Data = Mapper.Map<IEnumerable<doctorresponseviewmodel>>(doctors);
                 response.Success = true;
                 return response;
@@ -554,7 +554,7 @@ namespace smart_clinic.services.reporesity
                 if (user != null)
                 {
                     user.IsActive = false;
-                    
+
                     user.updatedat = DateTime.UtcNow;
                 }
                 await Context.SaveChangesAsync();
@@ -574,7 +574,7 @@ namespace smart_clinic.services.reporesity
 
         public async Task<IEnumerable<Doctor>> getdoctors()
         {
-            return await Context.Doctors.Include(d=>d.user).ToListAsync();
+            return await Context.Doctors.Include(d => d.user).ToListAsync();
         }
         // ===================== RECEPTIONIST =====================
         // create receptionist
@@ -618,7 +618,7 @@ namespace smart_clinic.services.reporesity
 
                 await Context.SaveChangesAsync();
                 await transaction.CommitAsync();
-                                   
+
                 response.Data = Mapper.Map<responsereceptionistviewmodel>(resptionist);
                 response.Message = "receptionist created successfully";
                 return response;
@@ -637,27 +637,46 @@ namespace smart_clinic.services.reporesity
         {
             using var transaction = await Context.Database.BeginTransactionAsync();
 
-            var response =new ResponseStatus<responsereceptionistviewmodel>();
+            var response = new ResponseStatus<responsereceptionistviewmodel>();
             try
             {
                 //check user
                 var user = await Context.Users.FindAsync(vm.userid);
-                if (user == null) 
+                if (user == null)
                 {
                     response.Success = false;
                     response.Message = $"this user id:{vm.userid} is not found";
                     response.Errors.Add(response.Message);
                     return response;
                 }
+
+                var existingEmail = await UserManager.FindByEmailAsync(vm.Email);
+                if (existingEmail != null && existingEmail.Id != user.Id)
+                {
+                    response.Success = false;
+                    response.Message = "This email is already in use by another account.";
+                    response.Errors.Add(response.Message);
+                    return response;
+                }
+
                 //update user
-                updateuser(vm,user);
+                updateuser(vm, user);
+                var identityUpdate = await UserManager.UpdateAsync(user);
+                if (!identityUpdate.Succeeded)
+                {
+                    response.Success = false;
+                    response.Message = "Could not update receptionist account details.";
+                    response.Errors.AddRange(identityUpdate.Errors.Select(e => e.Description));
+                    return response;
+                }
+
                 //check receptionist exit or not
                 var receptionist = await Context.resptionists.
-                    Include(r=>r.user)
-                    .FirstOrDefaultAsync(r=>r.userid==vm.userid);
+                    Include(r => r.user)
+                    .FirstOrDefaultAsync(r => r.userid == vm.userid);
                 if (receptionist == null)
                 {
-                    response.Success=false;
+                    response.Success = false;
                     response.Message = $"this receptionise employee:{vm.receptionid} is not found";
                     response.Errors.Add(response.Message);
                     return response;
@@ -688,11 +707,11 @@ namespace smart_clinic.services.reporesity
         //remove receptionist
         public async Task<ResponseStatus<bool>> removereceptionist(string userid)
         {
-            var response=new ResponseStatus<bool>();
+            var response = new ResponseStatus<bool>();
             try
             {
                 //check user 
-                var user=await Context.Users.FindAsync(userid);
+                var user = await Context.Users.FindAsync(userid);
                 if (user == null)
                 {
                     response.Success = false;
@@ -705,9 +724,9 @@ namespace smart_clinic.services.reporesity
                 user.updatedat = DateTime.UtcNow;
                 //receptionist
                 var receptionist = await Context.resptionists.
-                    Include(r=>r.user).
-                    FirstOrDefaultAsync(r=>r.userid==userid);
-                if (receptionist!=null)
+                    Include(r => r.user).
+                    FirstOrDefaultAsync(r => r.userid == userid);
+                if (receptionist != null)
                 {
                     receptionist.status = userstatus.inactive;
                 }
@@ -742,10 +761,10 @@ namespace smart_clinic.services.reporesity
                         t.user.Email.ToLower() == searchterm ||
                         t.user.PhoneNumber == searchterm ||
                         t.status.ToString().ToLower().Contains(searchterm)
-                        ||t.user.IsActive.ToString().ToLower()==searchterm);
+                        || t.user.IsActive.ToString().ToLower() == searchterm);
                 }
 
-                query = query.OrderByDescending(t => t.hiredate).OrderByDescending(t=>t.salary)
+                query = query.OrderByDescending(t => t.hiredate).OrderByDescending(t => t.salary)
                              .Skip((pg.PageNumber - 1) * pg.PageSize)
                              .Take(pg.PageSize);
 
@@ -768,7 +787,7 @@ namespace smart_clinic.services.reporesity
             try
             {
                 var receptionist = await Context.resptionists.
-                    Include(r=>r.user).FirstOrDefaultAsync(r=>r.resptionistid==id);
+                    Include(r => r.user).FirstOrDefaultAsync(r => r.resptionistid == id);
                 if (receptionist == null)
                 {
                     response.Success = false;
@@ -790,12 +809,12 @@ namespace smart_clinic.services.reporesity
         }
         public async Task<IEnumerable<resptionist>> getreceptionists()
         {
-            return await Context.resptionists.Include(r=>r.user).ToListAsync();
+            return await Context.resptionists.Include(r => r.user).ToListAsync();
         }
         //update user
-        private void updateuser(updateuserviewmodel vm,Aplicationuser user)
+        private void updateuser(updateuserviewmodel vm, Aplicationuser user)
         {
-            if (user==null||vm==null)
+            if (user == null || vm == null)
             {
                 throw new Exception("this data invalid");
             }
@@ -804,7 +823,7 @@ namespace smart_clinic.services.reporesity
             if (!string.IsNullOrEmpty(vm.UserName)) user.UserName = vm.UserName;
             if (!string.IsNullOrEmpty(vm.Email)) user.Email = vm.Email;
             if (!string.IsNullOrEmpty(vm.PhoneNumber)) user.PhoneNumber = vm.PhoneNumber;
-            if (vm.IsActive!=null) user.IsActive = vm.IsActive;
+            if (vm.IsActive != null) user.IsActive = vm.IsActive;
             user.updatedat = DateTime.UtcNow;
         }
         private async Task<bool> emailexit(string email)

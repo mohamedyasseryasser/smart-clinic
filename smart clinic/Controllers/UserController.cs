@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using smart_clinic.Models;
@@ -9,9 +10,10 @@ using System.Threading.Tasks;
 
 namespace smart_clinic.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class UserController : Controller
     {
-        public UserController(IUser userservice,IDepartment departmentserivce)
+        public UserController(IUser userservice, IDepartment departmentserivce)
         {
             Userservice = userservice;
             Departmentserivce = departmentserivce;
@@ -26,11 +28,11 @@ namespace smart_clinic.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return View("AddAdmin",vm);
+                return View("AddAdmin", vm);
             }
             try
             {
-                var result=await Userservice.addadmin(vm);
+                var result = await Userservice.addadmin(vm);
                 if (!result.Success)
                 {
                     foreach (var error in result.Errors)
@@ -43,7 +45,7 @@ namespace smart_clinic.Controllers
                 else
                 {
                     TempData["successed"] = result.Message ?? "add admin is successed";
-                    return RedirectToAction("AdminDetails", new { adminid = result.Data.adminid});
+                    return RedirectToAction("AdminDetails", new { adminid = result.Data.adminid });
                 }
             }
             catch (Exception ex)
@@ -54,7 +56,7 @@ namespace smart_clinic.Controllers
         }
         public async Task<IActionResult> AdminDetails(int adminid)
         {
-            ResponseStatus<responseadminviewmodel> response =await Userservice.getadminbyid(adminid);
+            ResponseStatus<responseadminviewmodel> response = await Userservice.getadminbyid(adminid);
             if (response.Success)
             {
                 return View(response.Data);
@@ -68,7 +70,7 @@ namespace smart_clinic.Controllers
         public async Task<IActionResult> ListAdmins(int pageNumber = 1, int pageSize = 10, string searchTerm = null)
         {
             var pagination = new pagination { PageNumber = pageNumber, PageSize = pageSize };
-         
+
             ResponseStatus<IEnumerable<responseadminviewmodel>> response = await Userservice.getalladmins(pagination, searchTerm);
             if (response.Success)
             {
@@ -86,8 +88,8 @@ namespace smart_clinic.Controllers
         // GET: User/UpdateAdmin/{adminId}
         public async Task<IActionResult> UpdateAdmin(int adminId)
         {
-             var response = await Userservice.getadminbyid(adminId);
-            if (response.Success) 
+            var response = await Userservice.getadminbyid(adminId);
+            if (response.Success)
             {
                 var updateVm = new updateadminviewmodel
                 {
@@ -98,42 +100,43 @@ namespace smart_clinic.Controllers
                     address = response.Data.address,
                     Gender = response.Data.Gender,
                     permissions = response.Data.permissions
-                    ,IsActive= response.Data.IsActive
+                    ,
+                    IsActive = response.Data.IsActive
                 };
                 return View(updateVm);
             }
             else
             {
-                TempData["errormessage"] = response.Message ??"this admin is not found";
+                TempData["errormessage"] = response.Message ?? "this admin is not found";
                 return RedirectToAction(nameof(ListAdmins));
             }
         }
-        public async Task<IActionResult> SaveUpdateAdmin(updateadminviewmodel vm) 
+        public async Task<IActionResult> SaveUpdateAdmin(updateadminviewmodel vm)
         {
-            var response=new ResponseStatus<responseadminviewmodel>();  
-            if (!ModelState.IsValid) 
+            var response = new ResponseStatus<responseadminviewmodel>();
+            if (!ModelState.IsValid)
             {
-                return View("UpdateAdmin",vm);
+                return View("UpdateAdmin", vm);
             }
             var updatedadmin = await Userservice.updateadmin(vm);
-            if (!updatedadmin.Success) 
+            if (!updatedadmin.Success)
             {
-                TempData["errormessage"] = response.Message??"updated is failed";
+                TempData["errormessage"] = response.Message ?? "updated is failed";
                 foreach (var error in updatedadmin.Errors)
                 {
-                    ModelState.AddModelError(string.Empty,error);
+                    ModelState.AddModelError(string.Empty, error);
                 }
             }
             else
             {
-                TempData["successfully"] =response.Message?? "this updated is successfully";
+                TempData["successfully"] = response.Message ?? "this updated is successfully";
                 response.Data = updatedadmin.Data;
-                return RedirectToAction(nameof(AdminDetails),new { adminid=updatedadmin.Data.adminid});
+                return RedirectToAction(nameof(AdminDetails), new { adminid = updatedadmin.Data.adminid });
             }
-            return View("UpdateAdmin",vm);
+            return View("UpdateAdmin", vm);
         }
         //remove admin
-        public async Task<ActionResult> RemoveAdmin(string Id) 
+        public async Task<ActionResult> RemoveAdmin(string Id)
         {
             ResponseStatus<bool> response = await Userservice.removeadmin(Id);
             if (response.Success)
@@ -155,8 +158,8 @@ namespace smart_clinic.Controllers
         }
         public async Task<IActionResult> SaveAddDoctor(doctorviewmodel vm)
         {
-           
-            if(ModelState.IsValid) 
+
+            if (ModelState.IsValid)
             {
                 ResponseStatus<doctorresponseviewmodel> response = await Userservice.adddoctor(vm);
                 if (response.Success)
@@ -174,7 +177,7 @@ namespace smart_clinic.Controllers
                 }
             }
             await LoadDepartments(vm);
-            return View("AddDoctor",vm);
+            return View("AddDoctor", vm);
         }
         private async Task LoadDepartments(doctorviewmodel vm)
         {
@@ -237,15 +240,15 @@ namespace smart_clinic.Controllers
                     Specialization = response.Data.Specialization,
                     hiredate = response.Data.hiredate,
                     salary = response.Data.salary,
-                    
-                    DepartmentId = response.Data.DepartmentId  ,
+
+                    DepartmentId = response.Data.DepartmentId,
                     deptids = depts.Select(d => new SelectListItem
                     {
                         Value = d.DepartmentId.ToString(),
                         Text = d.Name
                     }).ToList()
-                
-            }
+
+                }
             ;
                 return View(updateVm);
             }
@@ -297,10 +300,14 @@ namespace smart_clinic.Controllers
             return RedirectToAction(nameof(ListDoctors));
         }
         //receptionist
+        [HttpGet]
         public async Task<IActionResult> AddReceptionist()
         {
             return View();
         }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> SaveAddReceptionist(resceptionistviewmodel vm)
         {
             if (ModelState.IsValid)
@@ -308,12 +315,12 @@ namespace smart_clinic.Controllers
                 var response = await Userservice.addresceptionist(vm);
                 if (response.Success)
                 {
-                    TempData["successs"] = response.Message ?? "add receptionist is successfully";
+                    TempData["SuccessMessage"] = response.Message ?? "Receptionist added successfully.";
                     return RedirectToAction(nameof(ReceptionistDetails), new { id = response.Data.resptionistid });
                 }
                 else
                 {
-                    TempData["errormessage"] = response.Message ?? "add receptionist is failed";
+                    TempData["ErrorMessage"] = response.Message ?? "Failed to add receptionist.";
                     foreach (var error in response.Errors)
                     {
                         ModelState.AddModelError(string.Empty, error);
@@ -324,6 +331,7 @@ namespace smart_clinic.Controllers
 
         }
 
+        [HttpGet]
         public async Task<IActionResult> ReceptionistDetails(int id)
         {
             ResponseStatus<responsereceptionistviewmodel> response = await Userservice.getreceptionistbyid(id);
@@ -338,6 +346,7 @@ namespace smart_clinic.Controllers
             }
         }
 
+        [HttpGet]
         public async Task<IActionResult> ListReceptionists(int pageNumber = 1, int pageSize = 10, string searchTerm = null)
         {
             var pagination = new pagination { PageNumber = pageNumber, PageSize = pageSize };
@@ -356,6 +365,7 @@ namespace smart_clinic.Controllers
             }
         }
 
+        [HttpGet]
         public async Task<IActionResult> UpdateReceptionist(int id)
         {
             var response = await Userservice.getreceptionistbyid(id);
@@ -363,9 +373,9 @@ namespace smart_clinic.Controllers
             {
                 var updateVm = new updatereceptionistviewmodel
                 {
-                    receptionid=response.Data.resptionistid,
-                    hiredate=response.Data.hiredate,
-                    salary=response.Data.salary,
+                    receptionid = response.Data.resptionistid,
+                    hiredate = response.Data.hiredate,
+                    salary = response.Data.salary,
                     userid = response.Data.Id,
                     UserName = response.Data.UserName,
                     Email = response.Data.Email,
@@ -383,6 +393,8 @@ namespace smart_clinic.Controllers
             }
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> SaveUpdateReceptionist(updatereceptionistviewmodel vm)
         {
             if (ModelState.IsValid)
@@ -405,6 +417,8 @@ namespace smart_clinic.Controllers
             return View("UpdateReceptionist", vm);
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> RemoveReceptionist(string id)
         {
             ResponseStatus<bool> response = await Userservice.removereceptionist(id);
@@ -418,6 +432,6 @@ namespace smart_clinic.Controllers
             }
             return RedirectToAction(nameof(ListReceptionists));
         }
-        
+
     }
 }

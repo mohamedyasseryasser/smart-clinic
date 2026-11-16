@@ -22,6 +22,12 @@
     @await RenderSectionAsync("Styles", required: false)
 </head>
 <body>
+    @{
+        var currentController = ViewContext.RouteData.Values["Controller"]?.ToString();
+        var currentAction = ViewContext.RouteData.Values["Action"]?.ToString();
+        var receptionistActions = new[] { "ListReceptionists", "AddReceptionist", "SaveAddReceptionist", "ReceptionistDetails", "UpdateReceptionist", "SaveUpdateReceptionist", "RemoveReceptionist" };
+        var isReceptionistPage = currentController == "User" && receptionistActions.Contains(currentAction);
+    }
     <div class="wrapper">
         <!-- Sidebar -->
         <nav id="sidebar">
@@ -50,6 +56,16 @@
                             <i class="fas fa-user-md"></i>
                             <span>Medicine</span>
                         </a>
+                    </li>
+                    <li class="nav-item dropdown @(isReceptionistPage ? "active" : "")">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownReceptionists" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-concierge-bell"></i>
+                            <span>Receptionists</span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="navbarDropdownReceptionists">
+                            <li><a class="dropdown-item" asp-controller="User" asp-action="ListReceptionists">View Receptionists</a></li>
+                            <li><a class="dropdown-item" asp-controller="User" asp-action="AddReceptionist">Add Receptionist</a></li>
+                        </ul>
                     </li>
                 }
 
@@ -117,7 +133,7 @@
                     </li>
                 }
 
-              
+
 
                 <li class="@(ViewContext.RouteData.Values["Controller"]?.ToString() == "Auth" && ViewContext.RouteData.Values["Action"]?.ToString() == "ChangePassword" ? "active" : "")">
                     <a asp-controller="Auth" asp-action="ChangePassword">

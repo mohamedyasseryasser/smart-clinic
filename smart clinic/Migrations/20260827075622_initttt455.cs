@@ -5,7 +5,7 @@
 namespace smart_clinic.Migrations
 {
     /// <inheritdoc />
-    public partial class prescription : Migration
+    public partial class initttt455 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace smart_clinic.Migrations
 {
     /// <inheritdoc />
-    public partial class init : Migration
+    public partial class init1 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -53,26 +53,6 @@ namespace smart_clinic.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AspNetUsers", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Medicines",
-                columns: table => new
-                {
-                    medicineId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    StockQuantity = table.Column<int>(type: "int", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    SupplierName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Category = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    UnitPrice = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    RecordLevel = table.Column<int>(type: "int", nullable: false),
-                    ExpiryDate = table.Column<DateTime>(type: "datetime2", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Medicines", x => x.medicineId);
                 });
 
             migrationBuilder.CreateTable(
@@ -221,6 +201,28 @@ namespace smart_clinic.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "categories",
+                columns: table => new
+                {
+                    cat_id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    cat_name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    cat_description = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    isactive = table.Column<bool>(type: "bit", nullable: false),
+                    AddedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    user_id = table.Column<string>(type: "nvarchar(450)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_categories", x => x.cat_id);
+                    table.ForeignKey(
+                        name: "FK_categories_AspNetUsers_user_id",
+                        column: x => x.user_id,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Departments",
                 columns: table => new
                 {
@@ -265,6 +267,42 @@ namespace smart_clinic.Migrations
                         column: x => x.userid,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Medicines",
+                columns: table => new
+                {
+                    medicineId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    StockQuantity = table.Column<int>(type: "int", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    SupplierName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    UnitPrice = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    RecordLevel = table.Column<int>(type: "int", nullable: false),
+                    ExpiryDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CategoryName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    cat_id = table.Column<int>(type: "int", nullable: false),
+                    AddedBy = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    user_id = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Medicines", x => x.medicineId);
+                    table.ForeignKey(
+                        name: "FK_Medicines_AspNetUsers_user_id",
+                        column: x => x.user_id,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Medicines_categories_cat_id",
+                        column: x => x.cat_id,
+                        principalTable: "categories",
+                        principalColumn: "cat_id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -369,6 +407,7 @@ namespace smart_clinic.Migrations
                 {
                     InvoiceId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    cost = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     TotalAmount = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     Tax = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     Discount = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
@@ -501,6 +540,11 @@ namespace smart_clinic.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
+                name: "IX_categories_user_id",
+                table: "categories",
+                column: "user_id");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Departments_userid",
                 table: "Departments",
                 column: "userid");
@@ -521,6 +565,16 @@ namespace smart_clinic.Migrations
                 table: "Invoices",
                 column: "VisitId",
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Medicines_cat_id",
+                table: "Medicines",
+                column: "cat_id");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Medicines_user_id",
+                table: "Medicines",
+                column: "user_id");
 
             migrationBuilder.CreateIndex(
                 name: "IX_PrescriptionItems_mdeicineid",
@@ -586,6 +640,9 @@ namespace smart_clinic.Migrations
 
             migrationBuilder.DropTable(
                 name: "Prescriptions");
+
+            migrationBuilder.DropTable(
+                name: "categories");
 
             migrationBuilder.DropTable(
                 name: "Visits");

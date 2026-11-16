@@ -12,8 +12,8 @@ using smart_clinic.Models;
 namespace smart_clinic.Migrations
 {
     [DbContext(typeof(Context))]
-    [Migration("20260607035753_prescription")]
-    partial class prescription
+    [Migration("20260824063111_init1")]
+    partial class init1
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -473,6 +473,9 @@ namespace smart_clinic.Migrations
 
                     b.Property<int>("VisitId")
                         .HasColumnType("int");
+
+                    b.Property<decimal>("cost")
+                        .HasColumnType("decimal(18,2)");
 
                     b.HasKey("InvoiceId");
 
