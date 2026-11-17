@@ -1,6 +1,16 @@
+
 # Smart Clinic Management System
 
-A web-based clinic management application built with **ASP.NET Core MVC** and **SQL Server** to organize daily clinic operations. The system supports managing patients, appointments, visits, prescriptions, medications, departments, doctors, staff users, and invoices.
+A web-based clinic management application built with **ASP.NET Core MVC** and **SQL Server** to organize and simplify daily clinic operations.
+
+The system supports managing patients, appointments, visits, prescriptions, medications, departments, doctors, staff users, and invoices.
+
+### 🎥 Video Demo
+
+Watch the project walkthrough to explore the system's features and user interface:
+
+[**Watch Smart Clinic Management System Demo on LinkedIn**](https://www.linkedin.com/feed/update/urn:li:activity:7528085542710878209/)
+
 
 ## Features
 
